@@ -1,0 +1,11 @@
+{
+	"name":"Fabric",
+	"version":"0.0.1",
+	"author":"Jake Callery <jake@subvoicestudios.com>",
+	"description":"A multiplayer game based on warping fabric",
+	"dependencies": {
+		"requirejs" :"*",
+		"websocket" : "*",
+		"node-uuid" : "*"
+	}
+}
