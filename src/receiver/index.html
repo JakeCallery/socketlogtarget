@@ -2,51 +2,16 @@
 <html lang="en">
 <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-    <title>Gravity Jumper</title>
+    <title>Socket Log Target Receiver</title>
 
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <link href="css/main.css" rel="stylesheet"/>
-
-    <script>
-        var USE_COMPILED = false;
-        var require = {
-            baseUrl: './js',
-            paths: {
-                json2:'libs/json2',
-                plugins:'libs/plugins'
-            },
-            shim: {
-                json2: {
-                    exports: 'JSON'
-                }
-            }
-        }
-    </script>
+    <link href="css/receiver.css" rel="stylesheet"/>
 
 </head>
 <body>
 
 Hello
 
-<script type="text/javascript">
-    //Async load RequireJS
-    (function(){
-        var sel = document.createElement('script');
-        sel.type = 'text/javascript';
-        sel.async = true;
-        sel.setAttribute('data-main', 'app/main');
-
-        if(USE_COMPILED === false){
-            sel.src = 'js/libs/require.js';
-        }
-        else {
-            sel.src = 'js/compiled/compiled.js';
-        }
-
-        var firstTag = document.getElementsByTagName('script')[0];
-        firstTag.parentNode.insertBefore(sel,firstTag);
-    })();
-</script>
+<script type="text/javascript" data-main="js/app/main" src="js/libs/require.js"></script>
 
 </body>
 </html>
