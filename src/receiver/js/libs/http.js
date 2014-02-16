@@ -586,7 +586,8 @@ WebSocketServerSocket.prototype = {
 
   onFrame_: function(op, data) {
     if (op == 1) {
-      this.dispatchEvent('message', {'data': data});
+	  var self = this;
+      this.dispatchEvent('message', {'target':self,'data': data});
     } else if (op == 8) {
       // A close message must be confirmed before the websocket is closed.
       if (this.readyState == 1) {
@@ -644,7 +645,8 @@ WebSocketServerSocket.prototype = {
     chrome.socket.disconnect(this.socketId_);
     chrome.socket.destroy(this.socketId_);
     this.readyState = 3;
-    this.dispatchEvent('close');
+	var self = this;
+    this.dispatchEvent('close', {'target':self});
   }
 };
 

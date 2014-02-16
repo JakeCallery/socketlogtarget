@@ -56,11 +56,16 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
 
 		p.handleSocketMessage = function($evt){
 			L.log('Caught Socket Message: ', $evt, '@sm');
+			L.log('Socket:', $evt.target.id, '@sm');
+
+			for(var i = 0; i < this._connectedSockets.length; i++){
+				L.log('ID: ', this._connectedSockets[i].id,'@sm');
+			}
 
 		};
 
 		p.handleSocketClose = function($evt){
-			L.log('Caught Socket Close: ', $evt, '@sm');
+			L.log('Caught Socket Close: ', $evt.target.id, '@sm');
 		};
 
 		p.handleHttpRequest = function($req){
@@ -86,7 +91,7 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
 
 			socket.addEventListener('message', self._handleSocketMessageDelegate);
 			socket.addEventListener('close', self._handleSocketCloseDelegate);
-
+			socket.id = this._connectedSockets.length;
 			return true;
 
 		};
