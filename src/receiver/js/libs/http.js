@@ -10,8 +10,11 @@ var socket = (chrome.experimental && chrome.experimental.socket) ||
     chrome.socket;
 
 // If this does not have chrome.socket, then return an empty http namespace.
-if (!socket)
-  return {};
+if (!socket){
+	console.log('borked');
+	return {};
+}
+
 
 // Http response code strings.
 var responseMap = {
@@ -61,7 +64,7 @@ var stringToArrayBuffer = function(string) {
  */
 function EventSource() {
   this.listeners_ = {};
-};
+}
 
 EventSource.prototype = {
   /**
