@@ -9,9 +9,10 @@ define([
 	'app/config',
 	'http',
 	'jac/logger/Logger',
-	'jac/utils/EventUtils'
+	'jac/utils/EventUtils',
+	'app/ServerEvent'
 ],
-function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
+function(EventDispatcher,ObjUtils,config,http,L,EventUtils,ServerEvent){
     return (function(){
         /**
          * Creates a ServerManager object
@@ -26,9 +27,8 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
 				L.error('Failure to find http.Server or http.WebSocketServer', true);
 			}
 
-			L.log('New ServerManager', '@sm');
-
 			var self = this;
+			this._idCounter = 0;
 			this._connectedSockets = [];
 			this._httpServer = new http.Server();
 			this._wsServer = new http.WebSocketServer(self._httpServer);
@@ -42,6 +42,8 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
 			//Setup listeners
 			this._httpServer.addEventListener('request', this._handleHttpRequestDelegate);
 			this._wsServer.addEventListener('request', this._handleWSRrequestDelegate);
+
+			L.log('New ServerManager', '@sm');
         }
         
         //Inherit / Extend
@@ -53,19 +55,27 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
 			this._httpServer.listen($port);
 		};
 
-
 		p.handleSocketMessage = function($evt){
-			L.log('Caught Socket Message: ', $evt, '@sm');
+			L.log('Caught Socket Message: ', $evt, '/', $evt.target.id, '@sm');
 			L.log('Socket:', $evt.target.id, '@sm');
-
-			for(var i = 0; i < this._connectedSockets.length; i++){
-				L.log('ID: ', this._connectedSockets[i].id,'@sm');
-			}
-
+			this.dispatchEvent(new ServerEvent(ServerEvent.SOCKET_MESSAGE, $evt));
 		};
 
 		p.handleSocketClose = function($evt){
 			L.log('Caught Socket Close: ', $evt.target.id, '@sm');
+
+			var len = this._connectedSockets.length;
+			L.log('Socket Len Before: ', len, '@sm');
+			for(var i = 0; i < len; i++){
+				if(this._connectedSockets[i] == $evt.target){
+					this._connectedSockets.splice(i,1);
+					break;
+				}
+			}
+			L.log('Socket Len After: ', this._connectedSockets.length, '@sm');
+
+			this.dispatchEvent(new ServerEvent(ServerEvent.SOCKET_DISCONNECTED, $evt.target));
+
 		};
 
 		p.handleHttpRequest = function($req){
@@ -91,7 +101,9 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
 
 			socket.addEventListener('message', self._handleSocketMessageDelegate);
 			socket.addEventListener('close', self._handleSocketCloseDelegate);
-			socket.id = this._connectedSockets.length;
+			socket.id = ++this._idCounter;
+
+			this.dispatchEvent(new ServerEvent(ServerEvent.SOCKET_CONNECTED, socket));
 			return true;
 
 		};
