@@ -3,14 +3,16 @@ require.config({
 	paths: {
 		json2:'libs/json2',
 		http:'libs/http',
-		plugins:'libs/plugins'
+		plugins:'libs/plugins',
+		sha1:'libs/sha1'
 	},
 	shim: {
 		json2: {
 			exports: 'JSON'
 		},
 		http: {
-			exports:'http'
+			exports:'http',
+			deps:['sha1']
 		}
 	}
 });

@@ -27,16 +27,21 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
 			}
 
 			L.log('New ServerManager', '@sm');
+
 			var self = this;
+			this._connectedSockets = [];
 			this._httpServer = new http.Server();
 			this._wsServer = new http.WebSocketServer(self._httpServer);
 
 			//Setup delegates
 			this._handleHttpRequestDelegate = EventUtils.bind(self, self.handleHttpRequest);
+			this._handleWSRrequestDelegate = EventUtils.bind(self, self.handleWSRequest);
+			this._handleSocketMessageDelegate = EventUtils.bind(self, self.handleSocketMessage);
+			this._handleSocketCloseDelegate = EventUtils.bind(self, self.handleSocketClose);
 
 			//Setup listeners
 			this._httpServer.addEventListener('request', this._handleHttpRequestDelegate);
-
+			this._wsServer.addEventListener('request', this._handleWSRrequestDelegate);
         }
         
         //Inherit / Extend
@@ -48,8 +53,20 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
 			this._httpServer.listen($port);
 		};
 
+
+		p.handleSocketMessage = function($evt){
+			L.log('Caught Socket Message: ', $evt, '@sm');
+
+		};
+
+		p.handleSocketClose = function($evt){
+			L.log('Caught Socket Close: ', $evt, '@sm');
+		};
+
 		p.handleHttpRequest = function($req){
 			var url = $req.headers.url;
+
+			L.log('Caught Web Request for: ', $req.headers.url, '@sm');
 
 			if(url == '/'){
 				//serve index
@@ -59,6 +76,19 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils){
 			//Server it up fresh
 			$req.serveUrl(url);
 			return true;
+		};
+
+		p.handleWSRequest = function($req){
+			L.log('Socket Request', '@sm');
+			var self = this;
+			var socket = $req.accept();
+			this._connectedSockets.push(socket);
+
+			socket.addEventListener('message', self._handleSocketMessageDelegate);
+			socket.addEventListener('close', self._handleSocketCloseDelegate);
+
+			return true;
+
 		};
 
         //Return constructor

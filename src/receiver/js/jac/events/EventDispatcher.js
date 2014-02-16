@@ -77,7 +77,7 @@ define(['jac/events/JacEvent'], function (JacEvent) {
 		 * @param {JacEvent|Event} $event
 		 */
 		EventDispatcher.prototype.dispatchEvent = function($event){
-			if(typeof $event.target === 'undefined' || $event === null){
+			if(typeof $event.target === 'undefined' || $event.target === null){
 				$event.target = this;
 			}
 
