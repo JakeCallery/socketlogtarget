@@ -5,9 +5,15 @@
 
 define([
 	'jac/logger/Logger',
-	'jac/logger/ConsoleTarget'
+	'jac/logger/ConsoleTarget',
+	'http'
 ],
-	function(L,ConsoleTarget){
+	function(L,ConsoleTarget,http){
 		L.addLogTarget(new ConsoleTarget());
-		L.log('-- Logger Test --');
+		L.log('-- Logger Test --', '@main');
+
+		var server = new http.Server();
+
+		L.log('Server', server, '@main');
+
 	});
