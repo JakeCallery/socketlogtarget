@@ -23,7 +23,10 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
 			var self = this;
 
 			this._window = null;
+			this._document = null;
 			this._socket = $socket;
+			this._nameSpan = null;
+			this._logArea = null;
 
 			//Delegates
 			self._handleWindowClosedDelegate = EventUtils.bind(self, self.handleWindowClosed);
@@ -36,6 +39,12 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
         ObjUtils.inheritPrototype(Client,EventDispatcher);
         var p = Client.prototype;
 
+		p.setupWindow = function(){
+			this._nameSpan = this._document.getElementById('nameSpan');
+			this._logArea = this._document.getElementById('logArea');
+			this._nameSpan.innerHTML = this._socket.id;
+		};
+
 		p.createWindow = function(){
 			var self = this;
 			chrome.app.window.create('LogWindow.html', {
@@ -45,10 +54,15 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
 					}
 				},function($newWindow) {
 					self._window = $newWindow;
+					self._window.contentWindow.onload = function(){
+						L.log('Window Loaded', '@client');
+						self._document = self._window.contentWindow.document;
+						self.setupWindow()
+					};
 					self._window.onClosed.addListener(self._handleWindowClosedDelegate);
 					L.log('New client window', '@client');
+					L.log(self._window.contentWindow);
 				}
-
 			);
 		};
 
