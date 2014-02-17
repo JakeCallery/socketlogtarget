@@ -24,9 +24,11 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
 
 			this._window = null;
 			this._document = null;
-			this._socket = $socket;
 			this._nameSpan = null;
 			this._logArea = null;
+			this._bufferedMessages = [];
+
+			this.socket = $socket;
 
 			//Delegates
 			self._handleWindowClosedDelegate = EventUtils.bind(self, self.handleWindowClosed);
@@ -39,10 +41,25 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
         ObjUtils.inheritPrototype(Client,EventDispatcher);
         var p = Client.prototype;
 
+		p.postLogEntry = function($msg){
+			if(this._document != null){
+				L.log('Posting Message','@client');
+				this._logArea.value += $msg + '\n';
+			} else {
+				L.log('Buffering Message', '@client');
+				this._bufferedMessages.push($msg);
+			}
+		};
+
 		p.setupWindow = function(){
 			this._nameSpan = this._document.getElementById('nameSpan');
 			this._logArea = this._document.getElementById('logArea');
-			this._nameSpan.innerHTML = this._socket.id;
+			this._nameSpan.innerHTML = this.socket.id;
+
+			for(var i = 0; i < this._bufferedMessages.length; i++){
+				this.postLogEntry(this._bufferedMessages[i]);
+			}
+
 		};
 
 		p.createWindow = function(){

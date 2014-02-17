@@ -40,8 +40,27 @@ function(EventDispatcher,ObjUtils,ServerManager,
         ObjUtils.inheritPrototype(ClientManager,EventDispatcher);
         var p = ClientManager.prototype;
 
+		p.getClientBySocket = function($socket){
+			for(var i = 0; i < this._clients.length; i++){
+				if(this._clients[i].socket === $socket){
+					return this._clients[i];
+				}
+			}
+
+			return null;
+		};
+
 		p.handleClientMessage = function($srvEvt){
 			L.log('Caught client Message', $srvEvt.data, '@cm');
+
+			var client = this.getClientBySocket($srvEvt.data.target);
+			if(client !== null){
+				//Found client
+				client.postLogEntry($srvEvt.data.data);
+			} else {
+				L.log('Could not find client to post to', '@cm');
+			}
+
 
 		};
 
