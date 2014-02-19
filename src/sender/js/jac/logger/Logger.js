@@ -75,6 +75,7 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 				//Grab tag if it exists
 				var tag = '';
 				var lastArg = $args[$args.length-1];
+				var lastArg = $args[$args.length-1];
 				if(typeof lastArg === 'string' && lastArg.charAt(0) === '@'){
 					tag = $args.pop();
 				}
@@ -235,8 +236,9 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 
 			if(!$allowDuplicate){
 				for(var i = 0; i < Logger.targetList.length; i++){
-					if($target.prototype == Logger.targetList[i].prototype){
+					if($target.constructor == Logger.targetList[i].constructor){
 						//found a duplicate
+						console.log('Found A duplicate!');
 						$allowAdd = false;
 						break;
 					}

@@ -59,6 +59,7 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 		var p = SocketTarget.prototype;
 
 		p.output = function($args){
+			console.log('Output requested');
 			if(this.isEnabled){
 				console.log('trying output');
 				var list = Array.prototype.slice.call(arguments,0);
@@ -138,7 +139,7 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 		 * 	 }
 		 * 	}
 		 *
-		 * @param {Object} $msgDataObj object that is used for the 'message' object property
+		 * @param {Object | Array} $msgDataObj object that is used for the 'message' object property
 		 * @param {String} [$msgType='message'] string used for the info.type property
 		 * @param {Object} [$optInfoObj={}] object that is copied into the 'message' object property
 		 */
