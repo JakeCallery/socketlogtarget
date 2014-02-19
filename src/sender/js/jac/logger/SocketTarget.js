@@ -34,6 +34,7 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 			this.receiverAddress = $receiverAddress;
 			this._clientId = $clientId;
 			this._autoConnect = $autoConnect;
+			this._bufferedMessages = [];
 
 			//Delegates
 			this._handleSocketOpenDelegate = EventUtils.bind(self, self.handleSocketOpen);
@@ -60,6 +61,10 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 		p.output = function($args){
 			if(this.isEnabled){
 				console.log('trying output');
+				var list = Array.prototype.slice.call(arguments,0);
+				//TODO: an array might not be the best thing to serialize here
+				this.addMessage({message: list});
+				this.dispatchEvent(new LogEvent(LogEvent.TARGET_UPDATED));
 			}
 		};
 
@@ -84,30 +89,96 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 
 		};
 
+		p.checkCanSend = function(){
+			var result = this._socket && this._isConnected && this._socket.readyState == 1;
+			console.log('Checking Can Send: ' + result);
+			return result;
+		};
+
+
+		p.sendBufferedMessages = function(){
+			//TODO: Set up max batch size
+			//TODO: think about zlib compression for bigger messages
+
+			var len = this._bufferedMessages.length;
+
+			if(this.checkCanSend()){
+				if(len > 0){
+					var batchMsg = {};
+					batchMsg.messages = [];
+
+					for(var i = 0; i < len; i++){
+						batchMsg.messages.push(this._bufferedMessages.shift());
+					}
+
+					var str = JSON.stringify(batchMsg);
+					this._socket.send(str);
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+
+		};
+
 		/**
 		 *
-		 * @param {Object} $msgDataObj
-		 * @param {String} [$msgType='message']
-		 * @param {String} [$msgData='']
+		 * Adds a message to the message buffer
+		 * {
+		 * 	info:{
+		 * 		type: 'message',
+		 * 		client: 'My ID'
+		 * 	    <more optional properties>
+		 * 	},
+		 * 	 message:{
+		 * 		msg: 'some text here'
+		 * 		<any properties really>
+		 * 	 }
+		 * 	}
+		 *
+		 * @param {Object} $msgDataObj object that is used for the 'message' object property
+		 * @param {String} [$msgType='message'] string used for the info.type property
+		 * @param {Object} [$optInfoObj={}] object that is copied into the 'message' object property
 		 */
-		p.send = function($msgDataObj, $msgType, $msgData){
-			if(this._socket && this._isConnected && this._socket.readyState == 1){
-				var obj = {};
-				if($msgType === undefined){$msgType = 'message';}
-				if($msgData === undefined){$msgType = '';}
-				obj.type = $msgType;
-				obj.data = $msgData;
-				obj.message = $msgDataObj;
-				var str = JSON.stringify(obj);
-				this._socket.send(str);
-			} else {
-				//can't send
-				console.log('Can\'t Send');
+		p.addMessage = function($msgDataObj, $msgType, $optInfoObj){
+			var obj = {};
+			if($msgType === undefined){$msgType = 'message';}
+			if($optInfoObj === undefined){$optInfoObj = {};}
+
+			//Setup extra message info
+			obj.info = {
+				type: $msgType,
+				client: this._clientId
+			};
+
+			//Add extra info
+			for(var key in $optInfoObj){
+				if($optInfoObj.hasOwnProperty(key)){
+					obj.info[key] = $optInfoObj[key]
+				}
 			}
+
+			obj.message = $msgDataObj;
+			this._bufferedMessages.push(obj);
+
+			this.checkShouldSend();
+		};
+
+		p.checkShouldSend = function(){
+			//TODO: Set up conditions under which the batch messages should be sent
+			//for now just send
+			var didSend = this.sendBufferedMessages();
+			console.log('Did Send: ', didSend);
 		};
 
 		p.disconnect = function(){
 			console.log('trying disconnect');
+			if(this._socket){
+				this._socket.close();
+				this._isConnected = false;
+			}
 		};
 
 		p.handleSocketOpen = function($evt){
@@ -115,7 +186,10 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 			this._isConnected = true;
 
 			//send hello
-			this.send({},'hello', this._clientId);
+			this.addMessage({},'hello');
+
+			//request send
+			this.checkShouldSend();
 		};
 
 		p.handleSocketClose = function($evt){
