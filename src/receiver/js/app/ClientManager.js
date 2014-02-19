@@ -56,7 +56,7 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			var client = this.getClientBySocket($srvEvt.data.target);
 			if(client !== null){
 				//Found client
-				client.postLogEntry($srvEvt.data.data);
+				client.ingestMessage($srvEvt.data.data);
 			} else {
 				L.log('Could not find client to post to', '@cm');
 			}

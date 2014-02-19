@@ -41,13 +41,57 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
         ObjUtils.inheritPrototype(Client,EventDispatcher);
         var p = Client.prototype;
 
-		p.postLogEntry = function($msg){
+		p.ingestMessage = function($rawMsg){
+			L.log('Ingesting Message: ' + $rawMsg);
+
+			if(this._document === null){
+				L.log('Buffering Message', '@client');
+				this._bufferedMessages.push($rawMsg);
+			} else {
+				var msgObj = null;
+				try {
+					msgObj = JSON.parse($rawMsg);
+				} catch($err){
+					L.error('Bad JSON in Raw Message');
+				}
+
+				if(msgObj !== null && this.checkValidMessage(msgObj)){
+					//Good message
+					var messages = msgObj.messages;
+
+					for(var i = 0; i < messages.length; i++){
+						//deal with each message
+						var entry = messages[i];
+						switch(entry.info.type){
+							case 'hello':
+								//Set client title
+								this._nameSpan.innerHTML = entry.info.client;
+								break;
+							case 'log':
+								this.postLogEntry(entry.message);
+								break;
+						}
+					}
+				}
+			}
+
+		};
+
+		p.postLogEntry = function($logEntry){
 			if(this._document != null){
 				L.log('Posting Message','@client');
-				this._logArea.value += $msg + '\n';
+				this._logArea.value += $logEntry + '\n';
 			} else {
 				L.log('Buffering Message', '@client');
-				this._bufferedMessages.push($msg);
+				this._bufferedMessages.push($logEntry);
+			}
+		};
+
+		p.checkValidMessage = function($msgObj){
+			if($msgObj.hasOwnProperty('messages') && ObjUtils.isArray($msgObj.messages)){
+				return true;
+			} else {
+				return false;
 			}
 		};
 
@@ -57,7 +101,8 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
 			this._nameSpan.innerHTML = this.socket.id;
 
 			for(var i = 0; i < this._bufferedMessages.length; i++){
-				this.postLogEntry(this._bufferedMessages[i]);
+				L.log('Ingesting Buffered Message', '@client');
+				this.ingestMessage(this._bufferedMessages[i]);
 			}
 
 		};

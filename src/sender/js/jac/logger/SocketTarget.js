@@ -64,7 +64,7 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 				console.log('trying output');
 				var list = Array.prototype.slice.call(arguments,0);
 				//TODO: an array might not be the best thing to serialize here
-				this.addMessage({message: list});
+				this.addMessage(list);
 				this.dispatchEvent(new LogEvent(LogEvent.TARGET_UPDATED));
 			}
 		};
@@ -140,12 +140,12 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 		 * 	}
 		 *
 		 * @param {Object | Array} $msgDataObj object that is used for the 'message' object property
-		 * @param {String} [$msgType='message'] string used for the info.type property
+		 * @param {String} [$msgType='log'] string used for the info.type property
 		 * @param {Object} [$optInfoObj={}] object that is copied into the 'message' object property
 		 */
 		p.addMessage = function($msgDataObj, $msgType, $optInfoObj){
 			var obj = {};
-			if($msgType === undefined){$msgType = 'message';}
+			if($msgType === undefined){$msgType = 'log';}
 			if($optInfoObj === undefined){$optInfoObj = {};}
 
 			//Setup extra message info
