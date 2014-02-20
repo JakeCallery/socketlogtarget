@@ -125,7 +125,6 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 									}
 
 									if(str.search(re) !== -1){
-										//outputArray = $args;
 										outputArray.unshift(output);
 										target.output.apply(target, outputArray);
 										break;
@@ -135,7 +134,6 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 
 							} else {
 								//final output
-								//outputArray = $args;
 								outputArray.unshift(output);
 								target.output.apply(target, outputArray);
 							}
@@ -243,7 +241,6 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 				for(var i = 0; i < Logger.targetList.length; i++){
 					if($target.constructor == Logger.targetList[i].constructor){
 						//found a duplicate
-						console.log('Found A duplicate!');
 						$allowAdd = false;
 						break;
 					}
