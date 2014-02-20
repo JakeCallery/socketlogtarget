@@ -25,6 +25,10 @@ define([
 			L.warn('Could not add Socket Target', '@app');
 		}
 
+		var testObj = {
+			sweet:"stuff",
+			num:37
+		};
 
 		L.log('-- AppJS End --');
 		L.log('-- Another test--');
