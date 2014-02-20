@@ -75,7 +75,6 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 				//Grab tag if it exists
 				var tag = '';
 				var lastArg = $args[$args.length-1];
-				var lastArg = $args[$args.length-1];
 				if(typeof lastArg === 'string' && lastArg.charAt(0) === '@'){
 					tag = $args.pop();
 				}
@@ -87,7 +86,7 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 
 					//Copy args to new array we can screw with
 					for(var c = 0; c < $args.length; c++){
-						outputArray.push($args[i]);
+						outputArray.push($args[c]);
 					}
 
 				    var target = Logger.targetList[i];
@@ -126,7 +125,7 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 									}
 
 									if(str.search(re) !== -1){
-										outputArray = $args;
+										//outputArray = $args;
 										outputArray.unshift(output);
 										target.output.apply(target, outputArray);
 										break;
@@ -136,7 +135,7 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 
 							} else {
 								//final output
-								outputArray = $args;
+								//outputArray = $args;
 								outputArray.unshift(output);
 								target.output.apply(target, outputArray);
 							}
