@@ -83,6 +83,12 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 			    for(var i = 0; i < Logger.targetList.length; i++){
 				    var output = '';
 				    var outputArray = [];
+
+					//Copy args to new array we can screw with
+					for(var c = 0; c < $args.length; c++){
+						outputArray.push($args[c]);
+					}
+
 				    var target = Logger.targetList[i];
 					if(target.isEnabled && ($logLevel & Logger.levelFilter)){
 						//filter on tags
@@ -119,7 +125,6 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 									}
 
 									if(str.search(re) !== -1){
-										outputArray = $args;
 										outputArray.unshift(output);
 										target.output.apply(target, outputArray);
 										break;
@@ -129,7 +134,6 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 
 							} else {
 								//final output
-								outputArray = $args;
 								outputArray.unshift(output);
 								target.output.apply(target, outputArray);
 							}
@@ -235,7 +239,7 @@ function(BaseTarget, LogLevel, VerboseLevel, ParsedStackTrace){
 
 			if(!$allowDuplicate){
 				for(var i = 0; i < Logger.targetList.length; i++){
-					if($target.prototype == Logger.targetList[i].prototype){
+					if($target.constructor == Logger.targetList[i].constructor){
 						//found a duplicate
 						$allowAdd = false;
 						break;
