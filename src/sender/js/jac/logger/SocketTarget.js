@@ -8,9 +8,10 @@ define([
 	'jac/utils/ObjUtils',
 	'jac/logger/events/LogEvent',
 	'jac/utils/EventUtils',
-	'json2'
+	'json2',
+	'jac/logger/Logger'
 ],
-function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
+function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON,Logger){
     return (function(){
         /**
          * Creates a SocketTarget object
@@ -68,6 +69,7 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 				var list = Array.prototype.slice.call(arguments,0);
 				//TODO: an array might not be the best thing to serialize here
 				//TODO: build an 'object dumper' for showing full object properties
+				//TODO: loop through all args, if object, make it a json string if possible
 				this.addMessage(list.join(''));
 				this.dispatchEvent(new LogEvent(LogEvent.TARGET_UPDATED));
 			}
@@ -135,6 +137,7 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 		 * 	info:{
 		 * 		type: 'message',
 		 * 		client: 'My ID'
+		 * 	    verboseFilter: 0	//Could be useful for color parsing in the receiver
 		 * 	    <more optional properties>
 		 * 	},
 		 * 	 message:{
@@ -155,7 +158,8 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 			//Setup extra message info
 			obj.info = {
 				type: $msgType,
-				client: this._clientId
+				client: this._clientId,
+				verboseFilter: Logger.verboseFilter
 			};
 
 			//Add extra info

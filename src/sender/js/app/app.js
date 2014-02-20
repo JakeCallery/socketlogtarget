@@ -3,6 +3,15 @@
  * User: Jake
  */
 
+//TODO: Main todo list
+/*
+* Object dumper
+* 	if one of the passed in args is an object, break that down and send as JSON?
+*
+* Reconnection handling?  Might not really be needed, and might be annoying
+* Remove console.logs from SocketTarget :)
+*/
+
 define([
 	'jac/logger/Logger',
 	'jac/logger/ConsoleTarget',
@@ -25,12 +34,6 @@ define([
 			L.warn('Could not add Socket Target', '@app');
 		}
 
-		var testObj = {
-			sweet:"stuff",
-			num:37
-		};
-
 		L.log('-- AppJS End --');
-		L.log('-- Another test--');
 
 	});
