@@ -65,7 +65,7 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON){
 			console.log('Output requested');
 			if(this.isEnabled){
 				console.log('trying output');
-				var list = Array.prototype.slice.call(arguments,1);
+				var list = Array.prototype.slice.call(arguments,0);
 				//TODO: an array might not be the best thing to serialize here
 				//TODO: build an 'object dumper' for showing full object properties
 				this.addMessage(list.join(''));
