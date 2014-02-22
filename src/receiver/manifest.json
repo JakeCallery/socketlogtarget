@@ -11,7 +11,8 @@
 	"permissions": [
 		{"socket": [
 			"tcp-connect",
-			"tcp-listen"]}
+			"tcp-listen"
+		]}
 	],
 
 	"icons": { "16": "icons/receiver-16.png", "128": "icons/receiver-128.png" }

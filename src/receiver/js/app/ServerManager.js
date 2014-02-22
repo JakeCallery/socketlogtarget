@@ -50,9 +50,9 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils,ServerEvent){
         ObjUtils.inheritPrototype(ServerManager,EventDispatcher);
         var p = ServerManager.prototype;
 
-		p.init = function($port){
+		p.init = function($ipAddress, $port){
 			L.log('ServerManager init', '@sm');
-			this._httpServer.listen($port);
+			this._httpServer.listen($port,$ipAddress);
 		};
 
 		p.handleSocketMessage = function($evt){
