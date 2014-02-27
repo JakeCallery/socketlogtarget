@@ -7,9 +7,10 @@ define([
 	'jac/events/EventDispatcher',
 	'jac/utils/ObjUtils',
 	'jac/logger/Logger',
-	'jac/utils/EventUtils'
+	'jac/utils/EventUtils',
+	'app/ClientEvent'
 ],
-function(EventDispatcher,ObjUtils,L,EventUtils){
+function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
     return (function(){
         /**
          * Creates a Client object
@@ -42,7 +43,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
         var p = Client.prototype;
 
 		p.ingestMessage = function($rawMsg){
-			L.log('Ingesting Message: ' + $rawMsg);
+			L.log('Ingesting Message: ' + $rawMsg, '@client');
 
 			if(this._document === null){
 				L.log('Buffering Message', '@client');
@@ -55,7 +56,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
 					L.error('Bad JSON in Raw Message');
 				}
 
-				if(msgObj !== null && this.checkValidMessage(msgObj)){
+				if(msgObj !== null && this.checkValidMessageList(msgObj)){
 					//Good message
 					var messages = msgObj.messages;
 
@@ -65,10 +66,13 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
 						switch(entry.info.type){
 							case 'hello':
 								//Set client title
+								L.log('----- CAUGHT HELLO -----', '@client');
 								this._nameSpan.innerHTML = entry.info.client;
+								this.dispatchEvent(new ClientEvent(ClientEvent.HELLO_MSG, entry.info.client));
 								break;
 							case 'log':
 								this.postLogEntry(entry.message);
+								this.dispatchEvent(new ClientEvent(ClientEvent.LOG_MSG, entry.message));
 								break;
 						}
 					}
@@ -87,12 +91,8 @@ function(EventDispatcher,ObjUtils,L,EventUtils){
 			}
 		};
 
-		p.checkValidMessage = function($msgObj){
-			if($msgObj.hasOwnProperty('messages') && ObjUtils.isArray($msgObj.messages)){
-				return true;
-			} else {
-				return false;
-			}
+		p.checkValidMessageList = function($msgObj){
+			return ($msgObj.hasOwnProperty('messages') && ObjUtils.isArray($msgObj.messages));
 		};
 
 		p.setupWindow = function(){

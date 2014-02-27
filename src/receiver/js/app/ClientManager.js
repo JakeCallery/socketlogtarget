@@ -10,10 +10,11 @@ define(['' +
 	'app/SocketEvent',
 	'jac/Utils/EventUtils',
 	'jac/logger/Logger',
-	'app/Client'
+	'app/Client',
+	'app/ClientManagerEvent'
 ],
 function(EventDispatcher,ObjUtils,ServerManager,
-		 SocketEvent,EventUtils,L,Client){
+		 SocketEvent,EventUtils,L,Client,ClientManagerEvent){
     return (function(){
         /**
          * Creates a ClientManager object
@@ -68,6 +69,7 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			L.log('Caught Client Connected: ' + $socketEvt.socket.id, '@cm');
 			var client = new Client($socketEvt.socket);
 			this._clients.push(client);
+			this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.ADDED_CLIENT, client));
 		};
 
 		p.handleClientDisconnected = function($socketEvt){
@@ -87,6 +89,7 @@ function(EventDispatcher,ObjUtils,ServerManager,
 				L.log('Found Client, disconnecting', '@cm');
 				client.destroy();
 				this._clients.splice(idx,1);
+				this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.REMOVED_CLIENT, client));
 			}
 
 		};

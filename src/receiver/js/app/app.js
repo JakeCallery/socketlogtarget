@@ -12,19 +12,19 @@ define([
 	'app/ClientManager',
 	'jac/logger/VerboseLevel',
 	'app/MainView',
-	'app/ClientList'
+	'app/ClientListManager'
 ],
 function(L,ConsoleTarget,ServerManager,config,
 		 ServerEvent,ClientManager,VerboseLevel,
-		 MainView,ClientList){
+		 MainView,ClientListManager){
 	L.addLogTarget(new ConsoleTarget());
-	L.verboseFilter = VerboseLevel.ALL;
+	L.verboseFilter = (VerboseLevel.LEVEL | VerboseLevel.LINE | VerboseLevel.FUNCTION);
 	L.log('-- AppJS Start --', '@app');
 
 	//Set up server
 	var sm = new ServerManager();
 	var cm = new ClientManager(sm);
-	var clientList = new ClientList(sm);
+	var clientList = new ClientListManager(cm);
 
 	//Views
 	var mainView = new MainView();
