@@ -10,9 +10,9 @@ define([
 	'http',
 	'jac/logger/Logger',
 	'jac/utils/EventUtils',
-	'app/ServerEvent'
+	'app/SocketEvent'
 ],
-function(EventDispatcher,ObjUtils,config,http,L,EventUtils,ServerEvent){
+function(EventDispatcher,ObjUtils,config,http,L,EventUtils,SocketEvent){
     return (function(){
         /**
          * Creates a ServerManager object
@@ -58,7 +58,7 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils,ServerEvent){
 		p.handleSocketMessage = function($evt){
 			L.log('Caught Socket Message: ', $evt, '/', $evt.target.id, '@sm');
 			L.log('Socket:', $evt.target.id, '@sm');
-			this.dispatchEvent(new ServerEvent(ServerEvent.SOCKET_MESSAGE, $evt));
+			this.dispatchEvent(new SocketEvent(SocketEvent.SOCKET_MESSAGE, $evt.target, $evt));
 		};
 
 		p.handleSocketClose = function($evt){
@@ -74,7 +74,7 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils,ServerEvent){
 			}
 			L.log('Socket Len After: ', this._connectedSockets.length, '@sm');
 
-			this.dispatchEvent(new ServerEvent(ServerEvent.SOCKET_DISCONNECTED, $evt.target));
+			this.dispatchEvent(new SocketEvent(SocketEvent.SOCKET_DISCONNECTED, $evt.target));
 
 		};
 
@@ -103,7 +103,7 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils,ServerEvent){
 			socket.addEventListener('close', self._handleSocketCloseDelegate);
 			socket.id = ++this._idCounter;
 
-			this.dispatchEvent(new ServerEvent(ServerEvent.SOCKET_CONNECTED, socket));
+			this.dispatchEvent(new SocketEvent(SocketEvent.SOCKET_CONNECTED, socket));
 			return true;
 
 		};

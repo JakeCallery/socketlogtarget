@@ -21,3 +21,7 @@ body {
 	padding-right: 10px;
 	margin: 0;
 }
+
+#bitsDiv {
+	visibility: hidden;
+}

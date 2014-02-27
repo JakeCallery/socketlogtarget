@@ -7,13 +7,13 @@ define(['' +
 	'jac/events/EventDispatcher',
 	'jac/utils/ObjUtils',
 	'app/ServerManager',
-	'app/ServerEvent',
+	'app/SocketEvent',
 	'jac/Utils/EventUtils',
 	'jac/logger/Logger',
 	'app/Client'
 ],
 function(EventDispatcher,ObjUtils,ServerManager,
-		 ServerEvent,EventUtils,L,Client){
+		 SocketEvent,EventUtils,L,Client){
     return (function(){
         /**
          * Creates a ClientManager object
@@ -29,9 +29,9 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			this._clients = [];
 
 			this._sm = $serverManager;
-			this._sm.addEventListener(ServerEvent.SOCKET_CONNECTED, EventUtils.bind(self, self.handleClientConnected));
-			this._sm.addEventListener(ServerEvent.SOCKET_DISCONNECTED, EventUtils.bind(self, self.handleClientDisconnected));
-			this._sm.addEventListener(ServerEvent.SOCKET_MESSAGE, EventUtils.bind(self, self.handleClientMessage));
+			this._sm.addEventListener(SocketEvent.SOCKET_CONNECTED, EventUtils.bind(self, self.handleClientConnected));
+			this._sm.addEventListener(SocketEvent.SOCKET_DISCONNECTED, EventUtils.bind(self, self.handleClientDisconnected));
+			this._sm.addEventListener(SocketEvent.SOCKET_MESSAGE, EventUtils.bind(self, self.handleClientMessage));
 			L.log('New Client Manager', '@cm');
 
         }
@@ -50,13 +50,13 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			return null;
 		};
 
-		p.handleClientMessage = function($srvEvt){
-			L.log('Caught client Message', $srvEvt.data, '@cm');
+		p.handleClientMessage = function($socketEvt){
+			L.log('Caught client Message', $socketEvt.data, '@cm');
 
-			var client = this.getClientBySocket($srvEvt.data.target);
+			var client = this.getClientBySocket($socketEvt.socket);
 			if(client !== null){
 				//Found client
-				client.ingestMessage($srvEvt.data.data);
+				client.ingestMessage($socketEvt.data.data);
 			} else {
 				L.log('Could not find client to post to', '@cm');
 			}
@@ -64,18 +64,18 @@ function(EventDispatcher,ObjUtils,ServerManager,
 
 		};
 
-		p.handleClientConnected = function($srvEvt){
-			L.log('Caught Client Connected: ' + $srvEvt.data.id, '@cm');
-			var client = new Client($srvEvt.data);
+		p.handleClientConnected = function($socketEvt){
+			L.log('Caught Client Connected: ' + $socketEvt.socket.id, '@cm');
+			var client = new Client($socketEvt.socket);
 			this._clients.push(client);
 		};
 
-		p.handleClientDisconnected = function($srvEvt){
-			L.log('Caught Client Disconnected: ' + $srvEvt.data.id, '@cm');
+		p.handleClientDisconnected = function($socketEvt){
+			L.log('Caught Client Disconnected: ' + $socketEvt.socket.id, '@cm');
 			var client = null;
 			var idx = -1;
 			for(var i = 0; i < this._clients.length; i++){
-				if(this._clients[i].socket == $srvEvt.data){
+				if(this._clients[i].socket == $socketEvt.socket){
 					client = this._clients[i];
 					idx = i;
 					break;

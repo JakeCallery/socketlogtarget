@@ -25,13 +25,12 @@ function(L,ConsoleTarget,ServerManager,config,
 	var sm = new ServerManager();
 	var cm = new ClientManager(sm);
 	var clientList = new ClientList(sm);
+
 	//Views
 	var mainView = new MainView();
 
 	//Wait for connections
 	sm.init( config.SOCKET_IP, config.SOCKET_PORT);
-
-
 
 	L.log('-- AppJS End --',  '@main');
 
