@@ -27,8 +27,11 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 			this._document = null;
 			this._nameSpan = null;
 			this._logArea = null;
+			this._connectionStatusP = null;
 			this._bufferedMessages = [];
+			this._isConnected = false;
 
+			this.closeOnDisconnect = true;
 			this.socket = $socket;
 
 			//Delegates
@@ -98,7 +101,9 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 		p.setupWindow = function(){
 			this._nameSpan = this._document.getElementById('nameSpan');
 			this._logArea = this._document.getElementById('logArea');
+			this._connectionStatusP = this._document.getElementById('connectionStatusP');
 			this._nameSpan.innerHTML = this.socket.id;
+			this.setConnectionStatus(true);
 
 			for(var i = 0; i < this._bufferedMessages.length; i++){
 				L.log('Ingesting Buffered Message', '@client');
@@ -131,10 +136,23 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 		p.handleWindowClosed = function($evt){
 			L.log('Client caught Window Closed', '@client');
 			if(this._window){
+				//TODO: Close socket before window close
+
 				L.log('Removing onClosed');
 				this._window.onClosed.removeListener(this._handleWindowClosedDelegate);
 				this._window = null;
 			}
+		};
+
+		p.setConnectionStatus = function($isConnected){
+			this._isConnected = $isConnected;
+
+			if(this._isConnected === true){
+				this._connectionStatusP.innerHTML =	'(connected)';
+			} else {
+				this._connectionStatusP.innerHTML =	'(disconnected)';
+			}
+
 		};
 
 		p.destroy = function(){

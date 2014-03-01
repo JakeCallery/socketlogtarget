@@ -57,7 +57,7 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 			this.client = null;
 
 			//remove element
-			this.parent.removeChild(this.view);
+			this.view.parentNode.removeChild(this.view);
 
 			//clean view
 			this.view = null;

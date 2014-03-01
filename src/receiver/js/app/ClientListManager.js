@@ -11,11 +11,13 @@ define([
 	'jac/logger/Logger',
 	'app/SocketEvent',
 	'app/ClientListItem',
-	'app/ClientManagerEvent'
+	'app/ClientManagerEvent',
+	'jac/utils/ArrayUtils'
 
 ],
 function(Doc,EventDispatcher,ObjUtils,EventUtils,
-		 L,SocketEvent,ClientListItem,ClientManagerEvent){
+		 L,SocketEvent,ClientListItem,ClientManagerEvent,
+		 ArrayUtils){
     return (function(){
         /**
          * Creates a ClientListManager object

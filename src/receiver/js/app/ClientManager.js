@@ -61,8 +61,6 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			} else {
 				L.log('Could not find client to post to', '@cm');
 			}
-
-
 		};
 
 		p.handleClientConnected = function($socketEvt){
@@ -87,9 +85,14 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			if(client !== null){
 				//clean up
 				L.log('Found Client, disconnecting', '@cm');
-				client.destroy();
-				this._clients.splice(idx,1);
-				this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.REMOVED_CLIENT, client));
+				if(client.closeOnDisconnect === true){
+					client.destroy();
+					this._clients.splice(idx,1);
+					this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.REMOVED_CLIENT, client));
+				} else {
+					client.setDisconnected();
+				}
+
 			}
 
 		};

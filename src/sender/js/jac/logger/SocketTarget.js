@@ -80,7 +80,7 @@ function(BaseTarget,ObjUtils,LogEvent,EventUtils,JSON,Logger){
 			if('WebSocket' in window){
 				this._socket = new WebSocket(this.receiverAddress, 'log-proto');
 			} else if('MozWebSocket' in window){
-				this._socket = new MozWebSocket();
+				this._socket = new MozWebSocket(this.receiverAddress, 'log-proto');
 			} else {
 				//Could not new up a websocket...
 			}
