@@ -8,6 +8,7 @@ function(JacEvent,ObjUtils){
     return (function(){
 
 		//Statics
+		ClientEvent.WINDOW_CLOSING = 'clientWindowClosingEvent';
 		ClientEvent.HELLO_MSG = 'clientHelloMessageEvent';
 		ClientEvent.LOG_MSG = 'clientLogMessageEvent';
 

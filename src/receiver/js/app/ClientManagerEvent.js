@@ -10,6 +10,8 @@ function(JacEvent,ObjUtils){
 		//Statics
 		ClientManagerEvent.ADDED_CLIENT = 'clientManagerAddedClientEvent';
 		ClientManagerEvent.REMOVED_CLIENT = 'clientManagerRemovedClientEvent';
+		ClientManagerEvent.CLIENT_DISCONNECTED = 'clientManagerClientDisconnectedEvent';
+		ClientManagerEvent.CLIENT_CONNECTED = 'clientManagerClientConnectedEvent';
 
 		/**
          * Creates a ClientManagerEvent object

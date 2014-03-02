@@ -31,7 +31,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 			this._bufferedMessages = [];
 			this._isConnected = false;
 
-			this.closeOnDisconnect = true;
+			this.closeOnDisconnect = false;
 			this.socket = $socket;
 
 			//Delegates
@@ -136,8 +136,8 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 		p.handleWindowClosed = function($evt){
 			L.log('Client caught Window Closed', '@client');
 			if(this._window){
-				//TODO: Close socket before window close
-
+				this.dispatchEvent(new ClientEvent(ClientEvent.WINDOW_CLOSING));
+				this.socket.close();
 				L.log('Removing onClosed');
 				this._window.onClosed.removeListener(this._handleWindowClosedDelegate);
 				this._window = null;

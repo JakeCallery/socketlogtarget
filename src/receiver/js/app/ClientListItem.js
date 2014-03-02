@@ -31,6 +31,7 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 
 			//Elements
 			this._clientNameP = DOMUtils.getChildNodesByClassName(this.view, 'clientNameP')[0];
+			this._clientStatusP = DOMUtils.getChildNodesByClassName(this.view, 'connectionStatusP')[0];
 
 			//Delegates
 			this._helloMsgDelegate = EventUtils.bind(self, self.handleClientHello);
@@ -49,6 +50,14 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 		p.handleClientHello = function($clientEvt){
 			L.log('Caught Hello', '@cli');
 			this._clientNameP.innerHTML = $clientEvt.data;
+		};
+
+		p.setConnectionStatus = function($isConnected){
+			if($isConnected === true){
+				this._clientStatusP.innerHTML = '(connected)';
+			} else {
+				this._clientStatusP.innerHTML = '(disconnected)';
+			}
 		};
 
 		p.destroy = function(){

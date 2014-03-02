@@ -67,7 +67,15 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			L.log('Caught Client Connected: ' + $socketEvt.socket.id, '@cm');
 			var client = new Client($socketEvt.socket);
 			this._clients.push(client);
+
+			//Notify of client connection and addition
 			this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.ADDED_CLIENT, client));
+			this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.CLIENT_CONNECTED, client));
+		};
+
+		p.handleWindowClosing = function($clientEvt){
+			L.log('Caught Client Window Closing', '@cm');
+
 		};
 
 		p.handleClientDisconnected = function($socketEvt){
@@ -82,6 +90,9 @@ function(EventDispatcher,ObjUtils,ServerManager,
 				}
 			}
 
+			//Notify of disconnection, a client can be disconnected, but not removed
+			this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.CLIENT_DISCONNECTED, client));
+
 			if(client !== null){
 				//clean up
 				L.log('Found Client, disconnecting', '@cm');
@@ -90,7 +101,7 @@ function(EventDispatcher,ObjUtils,ServerManager,
 					this._clients.splice(idx,1);
 					this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.REMOVED_CLIENT, client));
 				} else {
-					client.setDisconnected();
+					client.setConnectionStatus(false);
 				}
 
 			}
