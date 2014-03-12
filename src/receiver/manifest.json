@@ -12,6 +12,10 @@
 		{"socket": [
 			"tcp-connect",
 			"tcp-listen"
+		]},
+
+		{"fileSystem": [
+			"write", "retainEntries", "directory"
 		]}
 	],
 

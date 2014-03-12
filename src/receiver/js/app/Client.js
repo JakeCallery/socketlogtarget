@@ -30,13 +30,18 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 			this._connectionStatusP = null;
 			this._bufferedMessages = [];
 			this._isConnected = false;
+			this._isLogSaved = false;
+			this._clientName = null;
 
 			this.closeOnDisconnect = false;
 			this.socket = $socket;
 
 			//Delegates
 			self._handleWindowClosedDelegate = EventUtils.bind(self, self.handleWindowClosed);
-
+			self._chooseEntryCompleteDelegate = EventUtils.bind(self, self.handleChooseEntryComplete);
+			self._handleFileWriteCompleteDelegate = EventUtils.bind(self, self.handleFileWriteComplete);
+			self._writeFileDelegate = EventUtils.bind(self, self.writeFile);
+			self._handleFileWriteErrorDelegate = EventUtils.bind(self, self.handleFileWriteError);
 			self.createWindow();
 			L.log('New Client', '@client');
         }
@@ -71,9 +76,11 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 								//Set client title
 								L.log('----- CAUGHT HELLO -----', '@client');
 								this._nameSpan.innerHTML = entry.info.client;
+								this._clientName = entry.info.client;
 								this.dispatchEvent(new ClientEvent(ClientEvent.HELLO_MSG, entry.info.client));
 								break;
 							case 'log':
+								this._isLogSaved = false;
 								this.postLogEntry(entry.message);
 								this.dispatchEvent(new ClientEvent(ClientEvent.LOG_MSG, entry.message));
 								break;
@@ -96,6 +103,50 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 
 		p.checkValidMessageList = function($msgObj){
 			return ($msgObj.hasOwnProperty('messages') && ObjUtils.isArray($msgObj.messages));
+		};
+
+		p.saveLog = function(){
+			L.log('Saving Log...', '@client');
+
+			var options = {
+				type: 'saveFile',
+				suggestedName: 'clientLog-' + this._clientName + '-' + Date.now(),
+				accepts: [
+					{
+						description:'*.log',
+						extensions: ['log','txt']
+					}
+				]
+			};
+			chrome.fileSystem.chooseEntry(options, this._chooseEntryCompleteDelegate);
+		};
+
+		p.handleChooseEntryComplete = function($entry){
+			L.log('Choose Entry Complete', '@client');
+			L.log('Entry: ', $entry, '@client');
+			var self = this;
+			if($entry){
+				$entry.createWriter(self._writeFileDelegate);
+			} else {
+				L.log('No file selected for save', '@client');
+			}
+		};
+
+		p.writeFile = function($writer){
+			L.log('Writing file', '@client');
+			var self = this;
+			EventUtils.addDomListener($writer, 'writeend', self._handleFileWriteCompleteDelegate);
+			$writer.write(new Blob([self._logArea.value], {type: 'text/plain'}));
+		};
+
+		p.handleFileWriteComplete = function($evt){
+			L.log('Write complete: ', $evt);
+			EventUtils.removeDomListener($evt.target, 'writeend', this._handleFileWriteCompleteDelegate);
+			this._isLogSaved = true;
+		};
+
+		p.handleFileWriteError = function($err){
+			L.error('Write file error', $err);
 		};
 
 		p.setupWindow = function(){

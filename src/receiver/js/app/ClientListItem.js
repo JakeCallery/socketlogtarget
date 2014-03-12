@@ -32,12 +32,20 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 			//Elements
 			this._clientNameP = DOMUtils.getChildNodesByClassName(this.view, 'clientNameP')[0];
 			this._clientStatusP = DOMUtils.getChildNodesByClassName(this.view, 'connectionStatusP')[0];
+			this._saveToFileButton = DOMUtils.getChildNodesByClassName(this.view, 'saveToFileButton')[0];
+			this._clientCloseButton = DOMUtils.getChildNodesByClassName(this.view, 'clientCloseButton')[0];
 
 			//Delegates
 			this._helloMsgDelegate = EventUtils.bind(self, self.handleClientHello);
+			this._saveToFileClickDelegate = EventUtils.bind(self, self.handleSaveToFileClick);
+			this._clientCloseClickDelegate = EventUtils.bind(self, self.handleClientCloseClick);
 
 			//Listen for hello message (on client)
 			this.client.addEventListener(ClientEvent.HELLO_MSG, this._helloMsgDelegate);
+
+			//Events
+			EventUtils.addDomListener(this._saveToFileButton, 'click', self._saveToFileClickDelegate);
+			EventUtils.addDomListener(this._clientCloseButton, 'click', self._clientCloseClickDelegate);
 
 			L.log('New Client List Item', '@cli');
 
@@ -46,6 +54,19 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
         //Inherit / Extend
         ObjUtils.inheritPrototype(ClientListItem,EventDispatcher);
         var p = ClientListItem.prototype;
+
+		p.handleClientCloseClick = function($clickEvt){
+			L.log('Caught Close Click', '@cli');
+		};
+
+		p.handleSaveToFileClick = function($clickEvt){
+			L.log('Caught Safe To File Click', '@cli');
+			if(this.client){
+				this.client.saveLog();
+			} else {
+				L.warn('Client Not Ready Yet');
+			}
+		};
 
 		p.handleClientHello = function($clientEvt){
 			L.log('Caught Hello', '@cli');
@@ -62,7 +83,13 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 
 		p.destroy = function(){
 			L.log('Destroying List Item', '@cli');
+
+			//Remove events
 			this.client.removeEventListener(ClientEvent.HELLO_MSG, this._helloMsgDelegate);
+			EventUtils.removeDomListener(this._saveToFileButton, 'click', self._saveToFileClickDelegate);
+			EventUtils.removeDomListener(this._clientCloseButton, 'click', self._clientCloseClickDelegate);
+
+			//Remove client reference
 			this.client = null;
 
 			//remove element
