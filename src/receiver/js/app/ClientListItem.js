@@ -34,11 +34,13 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 			this._clientStatusP = DOMUtils.getChildNodesByClassName(this.view, 'connectionStatusP')[0];
 			this._saveToFileButton = DOMUtils.getChildNodesByClassName(this.view, 'saveToFileButton')[0];
 			this._clientCloseButton = DOMUtils.getChildNodesByClassName(this.view, 'clientCloseButton')[0];
+			this._keepAfterDisconnectCB = DOMUtils.getChildNodesByClassName(this.view, 'keepAfterDisconnectCB')[0];
 
 			//Delegates
 			this._helloMsgDelegate = EventUtils.bind(self, self.handleClientHello);
 			this._saveToFileClickDelegate = EventUtils.bind(self, self.handleSaveToFileClick);
 			this._clientCloseClickDelegate = EventUtils.bind(self, self.handleClientCloseClick);
+			this._keepAfterDisconnectChangeDelegate = EventUtils.bind(self, self.handleKeepAfterDisconnectChange);
 
 			//Listen for hello message (on client)
 			this.client.addEventListener(ClientEvent.HELLO_MSG, this._helloMsgDelegate);
@@ -46,6 +48,10 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 			//Events
 			EventUtils.addDomListener(this._saveToFileButton, 'click', self._saveToFileClickDelegate);
 			EventUtils.addDomListener(this._clientCloseButton, 'click', self._clientCloseClickDelegate);
+			EventUtils.addDomListener(this._keepAfterDisconnectCB, 'change', self._keepAfterDisconnectChangeDelegate);
+
+			//Set up
+			this.client.closeOnDisconnect = !this._keepAfterDisconnectCB.checked;
 
 			L.log('New Client List Item', '@cli');
 
@@ -54,6 +60,11 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
         //Inherit / Extend
         ObjUtils.inheritPrototype(ClientListItem,EventDispatcher);
         var p = ClientListItem.prototype;
+
+		p.handleKeepAfterDisconnectChange = function($changeEvt){
+			L.log('Caught Keep After Disconnect Change: ' + this._keepAfterDisconnectCB.checked, '@cli');
+			this.client.closeOnDisconnect = !this._keepAfterDisconnectCB.checked;
+		};
 
 		p.handleClientCloseClick = function($clickEvt){
 			L.log('Caught Close Click', '@cli');
