@@ -11,10 +11,12 @@ define(['' +
 	'jac/Utils/EventUtils',
 	'jac/logger/Logger',
 	'app/Client',
-	'app/ClientManagerEvent'
+	'app/ClientManagerEvent',
+	'app/ClientEvent'
 ],
 function(EventDispatcher,ObjUtils,ServerManager,
-		 SocketEvent,EventUtils,L,Client,ClientManagerEvent){
+		 SocketEvent,EventUtils,L,Client,ClientManagerEvent,
+		 ClientEvent){
     return (function(){
         /**
          * Creates a ClientManager object
@@ -29,10 +31,15 @@ function(EventDispatcher,ObjUtils,ServerManager,
 
 			this._clients = [];
 
+			//Server manager events
 			this._sm = $serverManager;
 			this._sm.addEventListener(SocketEvent.SOCKET_CONNECTED, EventUtils.bind(self, self.handleClientConnected));
 			this._sm.addEventListener(SocketEvent.SOCKET_DISCONNECTED, EventUtils.bind(self, self.handleClientDisconnected));
 			this._sm.addEventListener(SocketEvent.SOCKET_MESSAGE, EventUtils.bind(self, self.handleClientMessage));
+
+			//delegates
+			this._handleWindowClosedDelegate = EventUtils.bind(self, self.handleWindowClosing);
+
 			L.log('New Client Manager', '@cm');
 
         }
@@ -71,11 +78,13 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			//Notify of client connection and addition
 			this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.ADDED_CLIENT, client));
 			this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.CLIENT_CONNECTED, client));
+
+			client.addEventListener(ClientEvent.WINDOW_CLOSING, this._handleWindowClosedDelegate);
 		};
 
 		p.handleWindowClosing = function($clientEvt){
 			L.log('Caught Client Window Closing', '@cm');
-
+			this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.REMOVED_CLIENT, $clientEvt.client));
 		};
 
 		p.handleClientDisconnected = function($socketEvt){
