@@ -32,8 +32,10 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 			this._isConnected = false;
 			this._isLogSaved = false;
 			this._clientName = null;
+			this._currentFileWriter = null;
 
 			this.closeOnDisconnect = false;
+			this.streamLogToFile = false;
 			this.socket = $socket;
 
 			//Delegates
@@ -92,12 +94,11 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 		};
 
 		p.postLogEntry = function($logEntry){
-			if(this._document != null){
-				L.log('Posting Message','@client');
-				this._logArea.value += $logEntry + '\n';
-			} else {
-				L.log('Buffering Message', '@client');
-				this._bufferedMessages.push($logEntry);
+			L.log('Posting Message','@client');
+			this._logArea.value += $logEntry + '\n';
+			if(this.streamLogToFile && this._currentFileWriter !== null){
+				//stream to file
+				this.appendToFile($logEntry + '\n');
 			}
 		};
 
@@ -133,15 +134,27 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 		};
 
 		p.writeFile = function($writer){
+			//TODO: proper error handling for failed writes (missing file, read only file, etc...)
 			L.log('Writing file', '@client');
 			var self = this;
+			if(this._currentFileWriter !== null){
+				EventUtils.removeDomListener($writer, 'writeend', self._handleFileWriteCompleteDelegate);
+			}
+
+			this._currentFileWriter = $writer;
+			this.dispatchEvent(new ClientEvent(ClientEvent.NEW_FILE_WRITER, this._currentFileWriter));
 			EventUtils.addDomListener($writer, 'writeend', self._handleFileWriteCompleteDelegate);
 			$writer.write(new Blob([self._logArea.value], {type: 'text/plain'}));
 		};
 
+		p.appendToFile = function($textData){
+			//TODO: Proper error handling on write
+			this._currentFileWriter.seek(this._currentFileWriter.length);
+			this._currentFileWriter.write(new Blob([$textData], {type: 'text/plain'}));
+		};
+
 		p.handleFileWriteComplete = function($evt){
 			L.log('Write complete: ', $evt);
-			EventUtils.removeDomListener($evt.target, 'writeend', this._handleFileWriteCompleteDelegate);
 			this._isLogSaved = true;
 		};
 

@@ -11,6 +11,7 @@ function(JacEvent,ObjUtils){
 		ClientEvent.WINDOW_CLOSING = 'clientWindowClosingEvent';
 		ClientEvent.HELLO_MSG = 'clientHelloMessageEvent';
 		ClientEvent.LOG_MSG = 'clientLogMessageEvent';
+		ClientEvent.NEW_FILE_WRITER = 'clientNewFileWriterEvent';
 
 		/**
          * Creates a ClientEvent object
