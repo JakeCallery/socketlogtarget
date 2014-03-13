@@ -82,6 +82,7 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils,SocketEvent){
 			var url = $req.headers.url;
 
 			L.log('Caught Web Request for: ', $req.headers.url, '@sm');
+			L.log('Request: ', $req, '@sm');
 
 			if(url == '/'){
 				//serve index
