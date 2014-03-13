@@ -68,6 +68,7 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 
 		p.handleClientCloseClick = function($clickEvt){
 			L.log('Caught Close Click', '@cli');
+			this.client.closeWindow();
 		};
 
 		p.handleSaveToFileClick = function($clickEvt){

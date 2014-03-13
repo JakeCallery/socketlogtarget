@@ -184,6 +184,11 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 			);
 		};
 
+		p.closeWindow = function(){
+			L.log('Force Window close', '@client');
+			this.destroy();
+		};
+
 		p.handleWindowClosed = function($evt){
 			L.log('Client caught Window Closed', '@client');
 			if(this._window){
