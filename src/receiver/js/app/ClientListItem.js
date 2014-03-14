@@ -36,6 +36,7 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 			this._clientCloseButton = DOMUtils.getChildNodesByClassName(this.view, 'clientCloseButton')[0];
 			this._keepAfterDisconnectCB = DOMUtils.getChildNodesByClassName(this.view, 'keepAfterDisconnectCB')[0];
 			this._streamToFileCB = DOMUtils.getChildNodesByClassName(this.view, 'streamToFileCB')[0];
+			this._savedP = DOMUtils.getChildNodesByClassName(this.view, 'savedP')[0];
 
 			//Delegates
 			this._helloMsgDelegate = EventUtils.bind(self, self.handleClientHello);
@@ -44,10 +45,14 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 			this._keepAfterDisconnectChangeDelegate = EventUtils.bind(self, self.handleKeepAfterDisconnectChange);
 			this._streamToFileChangeDelegate = EventUtils.bind(self, self.handleStreamToFileChange);
 			this._newFileWriterDelegate = EventUtils.bind(self, self.handleNewFileWriter);
+			this._logMessageDelegate = EventUtils.bind(self, self.handleLogMessage);
+			this._fileSaveCompleteDelegate = EventUtils.bind(self, self.handleFileSaveComplete);
 
 			//Listen for hello message (on client)
 			this.client.addEventListener(ClientEvent.HELLO_MSG, this._helloMsgDelegate);
 			this.client.addEventListener(ClientEvent.NEW_FILE_WRITER, this._newFileWriterDelegate);
+			this.client.addEventListener(ClientEvent.LOG_MSG, this._logMessageDelegate);
+			this.client.addEventListener(ClientEvent.FILE_SAVE_COMPLETE, this._fileSaveCompleteDelegate);
 
 			//Events
 			EventUtils.addDomListener(this._saveToFileButton, 'click', self._saveToFileClickDelegate);
@@ -67,6 +72,28 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
         //Inherit / Extend
         ObjUtils.inheritPrototype(ClientListItem,EventDispatcher);
         var p = ClientListItem.prototype;
+
+		p.handleFileSaveComplete = function($clientEvent){
+			L.log('Caught file Save complete', '@cli');
+			this.updateSavedStatus(this.client.isLogSaved);
+		};
+
+		p.handleLogMessage = function($clientEvt){
+			L.log('Caught new log message', '@cli');
+			this.updateSavedStatus(this.client.isLogSaved);
+		};
+
+		p.updateSavedStatus = function($isSaved){
+			if($isSaved === false){
+				if(this._savedP.style.visibility !== 'visible'){
+					this._savedP.style.visibility = 'visible';
+				}
+			} else {
+				if(this._savedP.style.visibility !== 'hidden'){
+					this._savedP.style.visibility = 'hidden';
+				}
+			}
+		};
 
 		p.handleNewFileWriter = function($clientEvt){
 			L.log('Caught new file writer', '@cli');

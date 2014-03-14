@@ -30,12 +30,12 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 			this._connectionStatusP = null;
 			this._bufferedMessages = [];
 			this._isConnected = false;
-			this._isLogSaved = false;
 			this._clientName = null;
 			this._currentFileWriter = null;
 			this._isWriting = false;
 			this._writeBuffer = '';
 
+			this.isLogSaved = false;
 			this.closeOnDisconnect = false;
 			this.streamLogToFile = false;
 			this.socket = $socket;
@@ -84,7 +84,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 								this.dispatchEvent(new ClientEvent(ClientEvent.HELLO_MSG, entry.info.client));
 								break;
 							case 'log':
-								this._isLogSaved = false;
+								this.isLogSaved = false;
 								this.postLogEntry(entry.message);
 								this.dispatchEvent(new ClientEvent(ClientEvent.LOG_MSG, entry.message));
 								break;
@@ -92,7 +92,6 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 					}
 				}
 			}
-
 		};
 
 		p.postLogEntry = function($logEntry){
@@ -182,13 +181,15 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 
 		p.handleFileWriteComplete = function($evt){
 			L.log('Write complete: ', $evt);
-			this._isLogSaved = true;
+			this.isLogSaved = true;
 			this._isWriting = false;
 
 			if(this._writeBuffer !== ''){
 				this.appendToFile(this._writeBuffer);
 				this._writeBuffer = '';
 			}
+
+			this.dispatchEvent(new ClientEvent(ClientEvent.FILE_SAVE_COMPLETE));
 
 		};
 
