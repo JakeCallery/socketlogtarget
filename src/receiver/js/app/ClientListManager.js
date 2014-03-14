@@ -4,7 +4,6 @@
  */
 
 define([
-	'plugins/domReady!',
 	'jac/events/EventDispatcher',
 	'jac/utils/ObjUtils',
 	'jac/utils/EventUtils',
@@ -15,7 +14,7 @@ define([
 	'jac/utils/ArrayUtils'
 
 ],
-function(Doc,EventDispatcher,ObjUtils,EventUtils,
+function(EventDispatcher,ObjUtils,EventUtils,
 		 L,SocketEvent,ClientListItem,ClientManagerEvent,
 		 ArrayUtils){
     return (function(){
@@ -24,17 +23,18 @@ function(Doc,EventDispatcher,ObjUtils,EventUtils,
          * @extends {EventDispatcher}
          * @constructor
          */
-        function ClientListManager($clientManager){
+        function ClientListManager($clientManager, $document){
             //super
             EventDispatcher.call(this);
 
 			var self = this;
 
+			this._document = $document;
 			this._cm = $clientManager;
-			this._clientUL = Doc.getElementById('clientUL');
+			this._clientUL = this._document.getElementById('clientUL');
 
 			this._clientListItems = [];
-			this._baseLIView = Doc.getElementsByClassName('clientListLI')[0];
+			this._baseLIView = this._document.getElementsByClassName('clientListLI')[0];
 
 			//Delegates
 			this._clientAddedDelegate= EventUtils.bind(self, self.handleClientAdded);

@@ -4,33 +4,26 @@
  */
 
 define([
+	'plugins/domReady!',
 	'jac/logger/Logger',
 	'jac/logger/ConsoleTarget',
-	'app/ServerManager',
-	'app/config',
-	'app/ServerEvent',
-	'app/ClientManager',
 	'jac/logger/VerboseLevel',
-	'app/MainView',
-	'app/ClientListManager'
+	'app/Receiver',
+	'jac/utils/EventUtils'
 ],
-function(L,ConsoleTarget,ServerManager,config,
-		 ServerEvent,ClientManager,VerboseLevel,
-		 MainView,ClientListManager){
+function(Doc,L,ConsoleTarget,VerboseLevel,Receiver,EventUtils){
 	L.addLogTarget(new ConsoleTarget());
 	L.verboseFilter = (VerboseLevel.LEVEL | VerboseLevel.LINE | VerboseLevel.FUNCTION);
 	L.log('-- AppJS Start --', '@app');
 
-	//Set up server
-	var sm = new ServerManager();
-	var cm = new ClientManager(sm);
-	var clientList = new ClientListManager(cm);
+	var receiver = null;
 
-	//Views
-	var mainView = new MainView();
+	var okButton = Doc.getElementById('settingsOKButton');
 
-	//Wait for connections
-	sm.init( config.SOCKET_IP, config.SOCKET_PORT);
+	EventUtils.addDomListener(okButton, 'click', function($evt){
+		receiver = new Receiver();
+	});
+
 
 	L.log('-- AppJS End --',  '@main');
 

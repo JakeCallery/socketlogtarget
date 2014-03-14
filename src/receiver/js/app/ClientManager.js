@@ -3,7 +3,7 @@
  * User: Jake
  */
 
-define(['' +
+define([
 	'jac/events/EventDispatcher',
 	'jac/utils/ObjUtils',
 	'app/ServerManager',
