@@ -6,13 +6,13 @@
 define([
 	'jac/events/EventDispatcher',
 	'jac/utils/ObjUtils',
-	'app/config',
+	'app/AppConfig',
 	'http',
 	'jac/logger/Logger',
 	'jac/utils/EventUtils',
 	'app/SocketEvent'
 ],
-function(EventDispatcher,ObjUtils,config,http,L,EventUtils,SocketEvent){
+function(EventDispatcher,ObjUtils,AppConfig,http,L,EventUtils,SocketEvent){
     return (function(){
         /**
          * Creates a ServerManager object
@@ -28,6 +28,7 @@ function(EventDispatcher,ObjUtils,config,http,L,EventUtils,SocketEvent){
 			}
 
 			var self = this;
+			this._appConfig = new AppConfig();
 			this._idCounter = 0;
 			this._connectedSockets = [];
 			this._httpServer = new http.Server();

@@ -9,9 +9,9 @@ define([
 	'jac/utils/ObjUtils',
 	'jac/utils/EventUtils',
 	'jac/logger/Logger',
-	'app/config'
+	'app/AppConfig'
 ],
-function(Doc,EventDispatcher,ObjUtils,EventUtils,L,config){
+function(Doc,EventDispatcher,ObjUtils,EventUtils,L,AppConfig){
     return (function(){
         /**
          * Creates a MainView object
@@ -23,6 +23,7 @@ function(Doc,EventDispatcher,ObjUtils,EventUtils,L,config){
             EventDispatcher.call(this);
 
 			var self = this;
+			this._appConfig = new AppConfig();
 			this._ipSpan = Doc.getElementById('ipSpan');
 			this._portSpan = Doc.getElementById('portSpan');
 
@@ -38,8 +39,8 @@ function(Doc,EventDispatcher,ObjUtils,EventUtils,L,config){
 
 		p.init = function(){
 			L.log('Init Main View', '@mainview');
-			this._ipSpan.innerHTML = config.SOCKET_IP;
-			this._portSpan.innerHTML = config.SOCKET_PORT;
+			this._ipSpan.innerHTML = this._appConfig.SOCKET_IP;
+			this._portSpan.innerHTML = this._appConfig.SOCKET_PORT;
 
 			//TODO: when network api is in stable channel set up selection for ip addresses
 //			//Get network interfaces, currently not supported in stable chrome
