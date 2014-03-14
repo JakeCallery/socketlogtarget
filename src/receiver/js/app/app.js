@@ -14,7 +14,7 @@ define([
 function(Doc,L,ConsoleTarget,VerboseLevel,Receiver,EventUtils){
 	L.addLogTarget(new ConsoleTarget());
 	L.verboseFilter = (VerboseLevel.LEVEL | VerboseLevel.LINE | VerboseLevel.FUNCTION);
-	L.log('-- AppJS Start --', '@app');
+	L.log('--  AppJS Start --', '@app');
 
 	var receiver = null;
 
