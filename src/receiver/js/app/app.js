@@ -19,7 +19,7 @@ function(L,ConsoleTarget,ServerManager,config,
 		 MainView,ClientListManager){
 	L.addLogTarget(new ConsoleTarget());
 	L.verboseFilter = (VerboseLevel.LEVEL | VerboseLevel.LINE | VerboseLevel.FUNCTION);
-	L.log('-- AppJS Start --', '@app');
+	L.log('--  AppJS Start --', '@app');
 
 	//Set up server
 	var sm = new ServerManager();
