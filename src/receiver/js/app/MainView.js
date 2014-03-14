@@ -4,28 +4,27 @@
  */
 
 define([
+	'plugins/domReady!',
 	'jac/events/EventDispatcher',
 	'jac/utils/ObjUtils',
 	'jac/utils/EventUtils',
 	'jac/logger/Logger',
-	'app/AppConfig'
+	'app/config'
 ],
-function(EventDispatcher,ObjUtils,EventUtils,L,AppConfig){
+function(Doc,EventDispatcher,ObjUtils,EventUtils,L,config){
     return (function(){
         /**
          * Creates a MainView object
          * @extends {EventDispatcher}
          * @constructor
          */
-        function MainView($document){
+        function MainView(){
             //super
             EventDispatcher.call(this);
 
 			var self = this;
-			this._config = new AppConfig();
-			this._document = $document;
-			this._ipSpan = this._document.getElementById('ipSpan');
-			this._portSpan = this._document.getElementById('portSpan');
+			this._ipSpan = Doc.getElementById('ipSpan');
+			this._portSpan = Doc.getElementById('portSpan');
 
 			this.init();
 
@@ -39,8 +38,8 @@ function(EventDispatcher,ObjUtils,EventUtils,L,AppConfig){
 
 		p.init = function(){
 			L.log('Init Main View', '@mainview');
-			this._ipSpan.innerHTML = this._config.SOCKET_IP;
-			this._portSpan.innerHTML = this._config.SOCKET_PORT;
+			this._ipSpan.innerHTML = config.SOCKET_IP;
+			this._portSpan.innerHTML = config.SOCKET_PORT;
 
 			//TODO: when network api is in stable channel set up selection for ip addresses
 //			//Get network interfaces, currently not supported in stable chrome

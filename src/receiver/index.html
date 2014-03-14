@@ -1,19 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-    <title>Settings</title>
+    <title>Socket Log Target Receiver</title>
 
     <link href="css/receiver.css" rel="stylesheet"/>
 
 </head>
 <body>
-    <p>Listen On address (0.0.0.0 for all interfaces):</p>
-    <input type="text" value="0.0.0.0" width="100px"/>
-    <p>Port:</p>
-    <input type="text" value="9999"/>
-    <button id="settingsOKButton">OK</button>
 
-    <script type="text/javascript" data-main="js/app/main" src="js/libs/require.js"></script>
+<section id="serverInfoSection">
+    <h1>Log Receiver</h1>
+    <h2>ip: <span id="ipSpan">unknown</span></h2>
+    <h2>port: <span id="portSpan">unknown</span></h2>
+</section>
+
+<section id="connectedClientsSection">
+    <ul id="clientUL"></ul>
+</section>
+
+<div id="bitsDiv">
+
+    <!-- Client List UL Item to copy from -->
+    <ul>
+        <li class="clientListLI">
+            <p class="clientNameP">Name Unknown</p>
+            <p class="savedP">*</p>
+            <p class="connectionStatusP">(disconnected)</p>
+            <input type="checkbox" class="keepAfterDisconnectCB" checked/><p>Keep open after disconnect</p>
+            <input type="checkbox" class="streamToFileCB" checked disabled/><p>Auto Save</p>
+            <button class="saveToFileButton">Save To File</button>
+            <button class="clientCloseButton">Close Client</button>
+        </li>
+    </ul>
+
+
+</div>
+
+<script type="text/javascript" data-main="js/app/main" src="js/libs/require.js"></script>
+
 </body>
 </html>

@@ -6,12 +6,13 @@
 define([
 	'jac/events/EventDispatcher',
 	'jac/utils/ObjUtils',
+	'app/config',
 	'http',
 	'jac/logger/Logger',
 	'jac/utils/EventUtils',
 	'app/SocketEvent'
 ],
-function(EventDispatcher,ObjUtils,http,L,EventUtils,SocketEvent){
+function(EventDispatcher,ObjUtils,config,http,L,EventUtils,SocketEvent){
     return (function(){
         /**
          * Creates a ServerManager object
