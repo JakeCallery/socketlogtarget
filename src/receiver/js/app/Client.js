@@ -33,6 +33,8 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 			this._isLogSaved = false;
 			this._clientName = null;
 			this._currentFileWriter = null;
+			this._isWriting = false;
+			this._writeBuffer = '';
 
 			this.closeOnDisconnect = false;
 			this.streamLogToFile = false;
@@ -141,21 +143,53 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 				EventUtils.removeDomListener($writer, 'writeend', self._handleFileWriteCompleteDelegate);
 			}
 
-			this._currentFileWriter = $writer;
-			this.dispatchEvent(new ClientEvent(ClientEvent.NEW_FILE_WRITER, this._currentFileWriter));
-			EventUtils.addDomListener($writer, 'writeend', self._handleFileWriteCompleteDelegate);
-			$writer.write(new Blob([self._logArea.value], {type: 'text/plain'}));
+			if($writer){
+				if(this._isWriting === false){
+					this._currentFileWriter = $writer;
+					this.dispatchEvent(new ClientEvent(ClientEvent.NEW_FILE_WRITER, this._currentFileWriter));
+					EventUtils.addDomListener($writer, 'writeend', self._handleFileWriteCompleteDelegate);
+					this._isWriting = true;
+					$writer.write(new Blob([self._logArea.value], {type: 'text/plain'}));
+				} else {
+					//buffer for next write
+					this._writeBuffer += self._logArea.value;
+				}
+
+			} else {
+				L.error('Bad Writer in Client::writeFile');
+			}
+
 		};
 
 		p.appendToFile = function($textData){
 			//TODO: Proper error handling on write
-			this._currentFileWriter.seek(this._currentFileWriter.length);
-			this._currentFileWriter.write(new Blob([$textData], {type: 'text/plain'}));
+
+			if(this._currentFileWriter){
+				if(this._isWriting === false){
+					this._isWriting = true;
+					this._currentFileWriter.seek(this._currentFileWriter.length);
+					this._currentFileWriter.write(new Blob([$textData], {type: 'text/plain'}));
+				} else {
+					//buffer for next write
+					L.log('--- Currently Writing, buffering output ---', '@buffer');
+					this._writeBuffer += $textData;
+				}
+			} else {
+				L.error('Bad _currentFileWriter in Client::appendToFile');
+			}
+
 		};
 
 		p.handleFileWriteComplete = function($evt){
 			L.log('Write complete: ', $evt);
 			this._isLogSaved = true;
+			this._isWriting = false;
+
+			if(this._writeBuffer !== ''){
+				this.appendToFile(this._writeBuffer);
+				this._writeBuffer = '';
+			}
+
 		};
 
 		p.handleFileWriteError = function($err){
