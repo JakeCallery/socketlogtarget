@@ -29,7 +29,7 @@ define([
 
 		if(SocketTarget.canUseWebSockets()){
 			L.log('Adding Socket Target', '@app');
-			L.addLogTarget(new SocketTarget('ws://localhost:9999', 'My Test Client', true));
+			L.addLogTarget(new SocketTarget('ws://192.168.1.95:9999', 'My Test Client', true));
 		} else {
 			L.warn('Could not add Socket Target', '@app');
 		}
