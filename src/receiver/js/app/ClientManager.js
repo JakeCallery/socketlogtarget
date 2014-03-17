@@ -12,13 +12,11 @@ define([
 	'jac/logger/Logger',
 	'app/Client',
 	'app/ClientManagerEvent',
-	'app/ClientEvent',
-	'jac/events/GlobalEventBus',
-	'app/AppEvent'
+	'app/ClientEvent'
 ],
 function(EventDispatcher,ObjUtils,ServerManager,
 		 SocketEvent,EventUtils,L,Client,ClientManagerEvent,
-		 ClientEvent,GEB,AppEvent){
+		 ClientEvent){
     return (function(){
         /**
          * Creates a ClientManager object
@@ -32,11 +30,6 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			var self = this;
 
 			this._clients = [];
-
-			this._geb = new GEB();
-
-			//global events
-			this._geb.addEventListener(AppEvent.APP_CLOSE, EventUtils.bind(self, self.handleAppClose));
 
 			//Server manager events
 			this._sm = $serverManager;
