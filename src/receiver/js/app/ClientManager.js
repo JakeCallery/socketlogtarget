@@ -3,7 +3,7 @@
  * User: Jake
  */
 
-define(['' +
+define([
 	'jac/events/EventDispatcher',
 	'jac/utils/ObjUtils',
 	'app/ServerManager',
@@ -12,11 +12,13 @@ define(['' +
 	'jac/logger/Logger',
 	'app/Client',
 	'app/ClientManagerEvent',
-	'app/ClientEvent'
+	'app/ClientEvent',
+	'jac/events/GlobalEventBus',
+	'app/AppEvent'
 ],
 function(EventDispatcher,ObjUtils,ServerManager,
 		 SocketEvent,EventUtils,L,Client,ClientManagerEvent,
-		 ClientEvent){
+		 ClientEvent,GEB,AppEvent){
     return (function(){
         /**
          * Creates a ClientManager object
@@ -30,6 +32,11 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			var self = this;
 
 			this._clients = [];
+
+			this._geb = new GEB();
+
+			//global events
+			this._geb.addEventListener(AppEvent.APP_CLOSE, EventUtils.bind(self, self.handleAppClose));
 
 			//Server manager events
 			this._sm = $serverManager;
@@ -112,9 +119,16 @@ function(EventDispatcher,ObjUtils,ServerManager,
 				} else {
 					client.setConnectionStatus(false);
 				}
-
 			}
+		};
 
+		p.handleAppClose = function($appEvt){
+			L.log('Caught Global App Close Event', '@cm');
+			for(var i = 0; i < this._clients.length; i++){
+				//Close all of the clients
+				var client = this._clients[i];
+				client.destroy();
+			}
 		};
 
         //Return constructor

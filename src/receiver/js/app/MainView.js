@@ -10,9 +10,12 @@ define([
 	'jac/utils/EventUtils',
 	'jac/logger/Logger',
 	'app/AppConfig',
-	'jac/utils/DOMUtils'
+	'jac/utils/DOMUtils',
+	'jac/events/GlobalEventBus',
+	'app/AppEvent'
 ],
-function(Doc,EventDispatcher,ObjUtils,EventUtils,L,AppConfig,DOMUtils){
+function(Doc,EventDispatcher,ObjUtils,EventUtils,L,
+		 AppConfig,DOMUtils,GEB,AppEvent){
     return (function(){
         /**
          * Creates a MainView object
@@ -24,10 +27,16 @@ function(Doc,EventDispatcher,ObjUtils,EventUtils,L,AppConfig,DOMUtils){
             EventDispatcher.call(this);
 
 			var self = this;
+			this._geb = new GEB();
 			this._sectionEl = $sectionEl;
 			this._appConfig = new AppConfig();
 			this._ipSpan = Doc.getElementById('ipSpan');
 			this._portSpan = Doc.getElementById('portSpan');
+			this._mainWindow = chrome.app.window.current();
+			L.log('Main Window: ', this._mainWindow, '@mainview');
+
+			//Delegates
+			this._handleWindowClosedDelegate = EventUtils.bind(self, self.handleWindowClosed);
 
 			this.init();
 
@@ -51,6 +60,13 @@ function(Doc,EventDispatcher,ObjUtils,EventUtils,L,AppConfig,DOMUtils){
 //				L.log('Got network interfaces');
 //			});
 
+			this._mainWindow.onClosed.addListener(this._handleWindowClosedDelegate);
+
+		};
+
+		p.handleWindowClosed = function($evt){
+			L.log('Caught Main Window Close', '@mainview');
+			this._geb.dispatchEvent(new AppEvent(AppEvent.APP_CLOSE));
 		};
 
 		p.enter = function(){

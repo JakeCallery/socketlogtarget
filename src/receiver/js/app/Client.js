@@ -8,9 +8,11 @@ define([
 	'jac/utils/ObjUtils',
 	'jac/logger/Logger',
 	'jac/utils/EventUtils',
-	'app/ClientEvent'
+	'app/ClientEvent',
+	'jac/events/GlobalEventBus',
+	'app/AppEvent'
 ],
-function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
+function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent){
     return (function(){
         /**
          * Creates a Client object
@@ -23,6 +25,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 
 			var self = this;
 
+			this._geb = new GEB();
 			this._window = null;
 			this._document = null;
 			this._nameSpan = null;
@@ -46,6 +49,8 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 			self._handleFileWriteCompleteDelegate = EventUtils.bind(self, self.handleFileWriteComplete);
 			self._writeFileDelegate = EventUtils.bind(self, self.writeFile);
 			self._handleFileWriteErrorDelegate = EventUtils.bind(self, self.handleFileWriteError);
+
+			//init
 			self.createWindow();
 			L.log('New Client', '@client');
         }
@@ -261,6 +266,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent){
 
 		p.destroy = function(){
 			L.log('Client caught destroy', '@client');
+
 			if(this._window !== null){
 				L.log('Closing Window','@client');
 				this._window.close();
