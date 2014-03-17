@@ -56,6 +56,19 @@ function(){
 		    }
 	    };
 
+		DOMUtils.getChildById = function($rootEl, $id){
+			var children = $rootEl.childNodes;
+			if(children){
+				for(var i = 0; i < children.length; i++){
+					if(children[i].id === $id){
+						//found it
+						return children[i];
+					}
+				}
+			}
+			return null;
+		};
+
 	    DOMUtils.getAllChildren = function($rootEl, $listToPopulate){
 		    var children = $rootEl.childNodes;
 		    if(children.length > 0){

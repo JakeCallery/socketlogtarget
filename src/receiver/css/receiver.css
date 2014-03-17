@@ -25,3 +25,7 @@ body {
 #bitsDiv {
 	visibility: hidden;
 }
+
+.hiddenElement {
+	visibility: hidden;
+}

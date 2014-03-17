@@ -52,7 +52,7 @@ function(EventDispatcher,ObjUtils,AppConfig,http,L,EventUtils,SocketEvent){
         var p = ServerManager.prototype;
 
 		p.init = function($ipAddress, $port){
-			L.log('ServerManager init', '@sm');
+			L.log('ServerManager init: ' + $ipAddress + ':' + $port, '@sm');
 			this._httpServer.listen($port,$ipAddress);
 		};
 

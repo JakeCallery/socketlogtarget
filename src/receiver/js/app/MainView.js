@@ -9,20 +9,22 @@ define([
 	'jac/utils/ObjUtils',
 	'jac/utils/EventUtils',
 	'jac/logger/Logger',
-	'app/AppConfig'
+	'app/AppConfig',
+	'jac/utils/DOMUtils'
 ],
-function(Doc,EventDispatcher,ObjUtils,EventUtils,L,AppConfig){
+function(Doc,EventDispatcher,ObjUtils,EventUtils,L,AppConfig,DOMUtils){
     return (function(){
         /**
          * Creates a MainView object
          * @extends {EventDispatcher}
          * @constructor
          */
-        function MainView(){
+        function MainView($sectionEl){
             //super
             EventDispatcher.call(this);
 
 			var self = this;
+			this._sectionEl = $sectionEl;
 			this._appConfig = new AppConfig();
 			this._ipSpan = Doc.getElementById('ipSpan');
 			this._portSpan = Doc.getElementById('portSpan');
@@ -49,6 +51,11 @@ function(Doc,EventDispatcher,ObjUtils,EventUtils,L,AppConfig){
 //				L.log('Got network interfaces');
 //			});
 
+		};
+
+		p.enter = function(){
+			L.log('Entering Main View', '@mainview');
+			DOMUtils.removeClass(this._sectionEl, 'hiddenElement');
 		};
 
         //Return constructor

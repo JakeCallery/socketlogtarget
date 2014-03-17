@@ -4,6 +4,7 @@
  */
 
 define([
+	'plugins/domReady!',
 	'jac/logger/Logger',
 	'jac/logger/ConsoleTarget',
 	'app/ServerManager',
@@ -12,27 +13,42 @@ define([
 	'app/ClientManager',
 	'jac/logger/VerboseLevel',
 	'app/MainView',
-	'app/ClientListManager'
+	'app/ClientListManager',
+	'app/SettingsManager',
+	'jac/utils/DOMUtils'
 ],
-function(L,ConsoleTarget,ServerManager,AppConfig,
+function(Doc,L,ConsoleTarget,ServerManager,AppConfig,
 		 ServerEvent,ClientManager,VerboseLevel,
-		 MainView,ClientListManager){
+		 MainView,ClientListManager,SettingsManager,
+		 DOMUtils){
+
 	L.addLogTarget(new ConsoleTarget());
 	L.verboseFilter = (VerboseLevel.LEVEL | VerboseLevel.LINE | VerboseLevel.FUNCTION);
 	L.log('-- AppJS Start --', '@app');
 
-	this._appConfig = new AppConfig();
+	var appConfig = new AppConfig();
+	var settingsEl = Doc.getElementById('settingsSection');
+	var mainViewEl = Doc.getElementById('mainViewSection');
 
-	//Set up server
-	var sm = new ServerManager();
-	var cm = new ClientManager(sm);
-	var clientList = new ClientListManager(cm);
+	var settingsManager = new SettingsManager(settingsEl);
+	settingsManager.addEventListener('settingsReadyEvent', function($evt){
+		//Manage Views
+		settingsManager.exit();
+		settingsManager.destroy();
+		settingsManager = null;
 
-	//Views
-	var mainView = new MainView();
+		//Set up server
+		var sm = new ServerManager();
+		var cm = new ClientManager(sm);
+		var clientList = new ClientListManager(cm);
 
-	//Wait for connections
-	sm.init(this._appConfig.SOCKET_IP, this._appConfig.SOCKET_PORT);
+		//Views
+		var mainView = new MainView(mainViewEl);
+		mainView.enter();
+
+		//Wait for connections
+		sm.init(appConfig.SOCKET_IP, appConfig.SOCKET_PORT);
+	});
 
 	L.log('-- AppJS End --',  '@main');
 

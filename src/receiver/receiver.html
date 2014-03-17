@@ -9,18 +9,28 @@
 </head>
 <body>
 
-<section id="serverInfoSection">
-    <h1>Log Receiver</h1>
-    <h2>ip: <span id="ipSpan">unknown</span></h2>
-    <h2>port: <span id="portSpan">unknown</span></h2>
+
+<section id="settingsSection">
+    <p>IP Address (0.0.0.0 for all interfaces):</p>
+    <input id="ipSettingsInput" type="text" value="0.0.0.0"/>
+    <p>Port:</p>
+    <input id="portSettingsInput" type="text" value="9999"/>
+    <button id="startListeningButton">Start Listening</button>
 </section>
 
-<section id="connectedClientsSection">
-    <ul id="clientUL"></ul>
+<section id="mainViewSection" class="hiddenElement">
+    <section id="serverInfoSection">
+        <h1>Log Receiver</h1>
+        <h2>ip: <span id="ipSpan">unknown</span></h2>
+        <h2>port: <span id="portSpan">unknown</span></h2>
+    </section>
+
+    <section id="connectedClientsSection">
+        <ul id="clientUL"></ul>
+    </section>
 </section>
 
 <div id="bitsDiv">
-
     <!-- Client List UL Item to copy from -->
     <ul>
         <li class="clientListLI">
@@ -33,8 +43,6 @@
             <button class="clientCloseButton">Close Client</button>
         </li>
     </ul>
-
-
 </div>
 
 <script type="text/javascript" data-main="js/app/main" src="js/libs/require.js"></script>
