@@ -5,7 +5,7 @@ html {
 }
 
 body {
-	background-color: #FFFFFF;
+	background-color: #2B2B2B;
 	height: 100%;
 	margin: 0;
 	padding: 0;
@@ -28,4 +28,14 @@ body {
 
 .hiddenElement {
 	visibility: hidden;
+}
+
+.basicModal {
+	margin-left: 10%;
+	margin-right: 10%;
+	background-color: #3C3F41;
+	border-radius: 10px;
+	position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-80%)
 }
