@@ -108,7 +108,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent,DOMUtils
 			var el = this._document.createElement('div');
 			DOMUtils.addClass(el, 'logEntryDiv');
 			el.textContent = $logEntry;
-			var container = this._document.getElementById('logEntryContainer');
+			var container = this._document.getElementById('logEntryRoot');
 			container.appendChild(el);
 			if(this.streamLogToFile && this._currentFileWriter !== null){
 				//stream to file
