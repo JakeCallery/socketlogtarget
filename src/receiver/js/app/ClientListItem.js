@@ -10,10 +10,11 @@ define([
 	'jac/utils/DOMUtils',
 	'app/ClientEvent',
 	'jac/utils/EventUtils',
-	'jac/logger/Logger'
+	'jac/logger/Logger',
+	'app/ClientListItemEvent'
 ],
 function(Doc,EventDispatcher,ObjUtils,DOMUtils,
-		 ClientEvent,EventUtils,L){
+		 ClientEvent,EventUtils,L,ClientListItemEvent){
     return (function(){
         /**
          * Creates a ClientListItem object
@@ -112,7 +113,7 @@ function(Doc,EventDispatcher,ObjUtils,DOMUtils,
 
 		p.handleClientCloseClick = function($clickEvt){
 			L.log('Caught Close Click', '@cli');
-			this.client.closeWindow();
+			this.dispatchEvent(new ClientListItemEvent(ClientListItemEvent.REQUEST_REMOVE_CLIENT));
 		};
 
 		p.handleSaveToFileClick = function($clickEvt){

@@ -253,7 +253,7 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent,DOMUtils
 						self.setupWindow()
 					};
 					self._window.onClosed.addListener(self._handleWindowClosedDelegate);
-					L.log('New client window', '@client');
+					L.log('New client window: ', self._window, '@client');
 					L.log(self._window.contentWindow);
 				}
 			);
@@ -265,11 +265,12 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent,DOMUtils
 		};
 
 		p.handleWindowClosed = function($evt){
-			L.log('Client caught Window Closed', '@client');
+			var id = this.socket.id;
+			L.log('Client caught Window Closed: ' + id, '@client');
 			if(this._window){
 				this.dispatchEvent(new ClientEvent(ClientEvent.WINDOW_CLOSING));
 				this.socket.close();
-				L.log('Removing onClosed');
+				L.log('Removing onClosed: ' + id);
 				this._window.onClosed.removeListener(this._handleWindowClosedDelegate);
 				this._window = null;
 			}
@@ -287,10 +288,10 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent,DOMUtils
 		};
 
 		p.destroy = function(){
-			L.log('Client caught destroy', '@client');
+			L.log('Client caught destroy: ' + this.socket.id, '@client');
 
 			if(this._window !== null){
-				L.log('Closing Window','@client');
+				L.log('Closing Window: ' + this.socket.id,'@client');
 				this._window.close();
 			}
 		};
