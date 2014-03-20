@@ -12,12 +12,13 @@ define([
 	'app/SocketEvent',
 	'app/ClientListItem',
 	'app/ClientManagerEvent',
-	'jac/utils/ArrayUtils'
+	'jac/utils/ArrayUtils',
+	'app/ClientListItemEvent'
 
 ],
 function(Doc,EventDispatcher,ObjUtils,EventUtils,
 		 L,SocketEvent,ClientListItem,ClientManagerEvent,
-		 ArrayUtils){
+		 ArrayUtils,ClientListItemEvent){
     return (function(){
         /**
          * Creates a ClientListManager object
@@ -41,6 +42,7 @@ function(Doc,EventDispatcher,ObjUtils,EventUtils,
 			this._clientRemovedDelegate = EventUtils.bind(self, self.handleClientRemoved);
 			this._clientDisconnectedDelegate = EventUtils.bind(self, self.handleClientDisconnected);
 			this._clientConnectedDelegate = EventUtils.bind(self, self.handleClientConnected);
+			this._handleRequestRemoveClientDelegate = EventUtils.bind(self, self.handleRequestRemoveClient);
 
 			this._cm.addEventListener(ClientManagerEvent.CLIENT_CONNECTED, this._clientConnectedDelegate);
 			this._cm.addEventListener(ClientManagerEvent.ADDED_CLIENT, this._clientAddedDelegate);
@@ -66,9 +68,15 @@ function(Doc,EventDispatcher,ObjUtils,EventUtils,
 
 		p.handleClientAdded = function($cmEvt){
 			L.log('Caught Client Added: ', $cmEvt, '@clm');
-			var ci = new ClientListItem($cmEvt.client, this._baseLIView);
-			this._clientListItems.push(ci);
-			this._clientUL.appendChild(ci.view);
+			var cli = new ClientListItem($cmEvt.client, this._baseLIView);
+			this._clientListItems.push(cli);
+			this._clientUL.appendChild(cli.view);
+			cli.addEventListener(ClientListItemEvent.REQUEST_REMOVE_CLIENT, this._handleRequestRemoveClientDelegate);
+		};
+
+		p.handleRequestRemoveClient = function($cliEvt){
+			L.log('Caught Request Remove Client: ',$cliEvt.target.client, 'clm');
+			this._cm.removeClient($cliEvt.target.client);
 		};
 
 		p.handleClientConnected = function($cmEvt){

@@ -12,11 +12,12 @@ define([
 	'jac/logger/Logger',
 	'app/Client',
 	'app/ClientManagerEvent',
-	'app/ClientEvent'
+	'app/ClientEvent',
+	'jac/utils/ArrayUtils'
 ],
 function(EventDispatcher,ObjUtils,ServerManager,
 		 SocketEvent,EventUtils,L,Client,ClientManagerEvent,
-		 ClientEvent){
+		 ClientEvent,ArrayUtils){
     return (function(){
         /**
          * Creates a ClientManager object
@@ -58,6 +59,16 @@ function(EventDispatcher,ObjUtils,ServerManager,
 			return null;
 		};
 
+		p.getIndexByClient = function($client){
+			for(var i = 0; i < this._clients.length; i++){
+				if(this._clients[i] === $client){
+					return i;
+				}
+			}
+
+			return -1;
+		};
+
 		p.handleClientMessage = function($socketEvt){
 			L.log('Caught client Message', $socketEvt.data, '@cm');
 
@@ -89,15 +100,7 @@ function(EventDispatcher,ObjUtils,ServerManager,
 
 		p.handleClientDisconnected = function($socketEvt){
 			L.log('Caught Client Disconnected: ' + $socketEvt.socket.id, '@cm');
-			var client = null;
-			var idx = -1;
-			for(var i = 0; i < this._clients.length; i++){
-				if(this._clients[i].socket == $socketEvt.socket){
-					client = this._clients[i];
-					idx = i;
-					break;
-				}
-			}
+			var client = this.getClientBySocket($socketEvt.socket);
 
 			//Notify of disconnection, a client can be disconnected, but not removed
 			this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.CLIENT_DISCONNECTED, client));
@@ -106,13 +109,19 @@ function(EventDispatcher,ObjUtils,ServerManager,
 				//clean up
 				L.log('Found Client, disconnecting', '@cm');
 				if(client.closeOnDisconnect === true){
-					client.destroy();
-					this._clients.splice(idx,1);
-					this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.REMOVED_CLIENT, client));
+					this.removeClient(client);
 				} else {
 					client.setConnectionStatus(false);
 				}
 			}
+		};
+
+		p.removeClient = function($client){
+			var idx = this.getIndexByClient($client);
+			$client.removeEventListener(ClientEvent.WINDOW_CLOSING, this._handleWindowClosedDelegate);
+			$client.destroy();
+			this._clients.splice(idx,1);
+			this.dispatchEvent(new ClientManagerEvent(ClientManagerEvent.REMOVED_CLIENT, $client));
 		};
 
 		p.handleAppClose = function($appEvt){
