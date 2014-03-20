@@ -10,9 +10,10 @@ define([
 	'jac/utils/EventUtils',
 	'app/ClientEvent',
 	'jac/events/GlobalEventBus',
-	'app/AppEvent'
+	'app/AppEvent',
+	'jac/utils/DOMUtils'
 ],
-function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent){
+function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent,DOMUtils){
     return (function(){
         /**
          * Creates a Client object
@@ -101,7 +102,14 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent){
 
 		p.postLogEntry = function($logEntry){
 			L.log('Posting Message','@client');
-			this._logArea.value += $logEntry + '\n';
+			//this._logArea.value += $logEntry + '\n';
+
+			//Create div
+			var el = this._document.createElement('div');
+			DOMUtils.addClass(el, 'logEntryDiv');
+			el.textContent = $logEntry;
+			var container = this._document.getElementById('logEntryContainer');
+			container.appendChild(el);
 			if(this.streamLogToFile && this._currentFileWriter !== null){
 				//stream to file
 				this.appendToFile($logEntry + '\n');
@@ -139,6 +147,19 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent){
 			}
 		};
 
+		p.getAllLogEntriesAsText = function(){
+			var containerDiv = this._document.getElementById('logEntryContainer');
+			var fullText = '';
+			var children = DOMUtils.getChildNodesByClassName(containerDiv, 'logEntryDiv');
+
+			for(var i = 0; i < children.length; i++){
+				fullText += children[i].textContent + '\n';
+			}
+
+			return fullText;
+
+		};
+
 		p.writeFile = function($writer){
 			//TODO: proper error handling for failed writes (missing file, read only file, etc...)
 			L.log('Writing file', '@client');
@@ -148,15 +169,16 @@ function(EventDispatcher,ObjUtils,L,EventUtils,ClientEvent,GEB,AppEvent){
 			}
 
 			if($writer){
+				var entryText = this.getAllLogEntriesAsText();
 				if(this._isWriting === false){
 					this._currentFileWriter = $writer;
 					this.dispatchEvent(new ClientEvent(ClientEvent.NEW_FILE_WRITER, this._currentFileWriter));
 					EventUtils.addDomListener($writer, 'writeend', self._handleFileWriteCompleteDelegate);
 					this._isWriting = true;
-					$writer.write(new Blob([self._logArea.value], {type: 'text/plain'}));
+					$writer.write(new Blob([entryText], {type: 'text/plain'}));
 				} else {
 					//buffer for next write
-					this._writeBuffer += self._logArea.value;
+					this._writeBuffer += entryText;
 				}
 
 			} else {

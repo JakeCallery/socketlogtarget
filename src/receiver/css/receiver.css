@@ -16,10 +16,23 @@ body {
 	width: 100%
 }
 
+.logEntryDiv {
+
+}
+
 .logSection {
 	padding-left: 10px;
 	padding-right: 10px;
 	margin: 0;
+}
+
+#logEntryContainer {
+	position: absolute;
+	right: 0;
+	left: 0;
+	top: 90px;
+	bottom: 0;
+	overflow-y: auto;
 }
 
 #bitsDiv {
