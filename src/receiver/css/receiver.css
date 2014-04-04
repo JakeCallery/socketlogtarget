@@ -5,7 +5,7 @@ html {
 }
 
 body {
-	background-color: #2B2B2B;
+	background-color: #091a21;
 	height: 100%;
 	margin: 0;
 	padding: 0;
@@ -21,6 +21,7 @@ textarea:focus,
 button:focus {
 	outline: none;
 }
+
 /******************************
 SETTINGS
 *******************************/
@@ -44,17 +45,24 @@ SETTINGS
 
 .settingsH1 {
 	font-size: 20pt;
-	color: #ff9132;
+	color: #D9AD70;
+	margin: 0;
+	padding: 0;
+}
+
+.settingsH2 {
+	font-size: 15pt;
+	color: #D9AD70;
 	margin: 0;
 	padding: 0;
 }
 
 .settingsNumberInput {
 	width: 100%;
-	background: #c5cdff;
+	background: transparent;
 	border: none;
 	font-size: 40pt;
-	color: #1aa7ff;
+	color: #D75322;
 	text-align: center;
 	border-radius: 5px;
 }
@@ -66,9 +74,9 @@ SETTINGS
 .startListeningButton {
 	margin: 0;
 	padding: 10px;
-	color: #FFFFFF;
+	color: #A59764;
 	font-weight: bold;
-	background-color: #1aa7ff;
+	background-color: #2D5457;
 	border-style: none;
 	border-radius: 7px;
 	font-size: 15pt;
@@ -76,7 +84,7 @@ SETTINGS
 }
 
 .startListeningButton:hover {
-	background-color: #12bdff;
+	color: #ffffff;
 	cursor: pointer;
 }
 
@@ -132,8 +140,9 @@ MISC
 .basicModal {
 	margin-left: 10%;
 	margin-right: 10%;
-	background-color: #3C3F41;
+	background-color: #143641;
 	border-radius: 10px;
+	border-style: groove;
 	position: relative;
 	top: 50%;
 	-webkit-transform: translateY(-60%)
