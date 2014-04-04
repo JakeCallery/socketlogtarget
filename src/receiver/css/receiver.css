@@ -13,6 +13,15 @@ body {
 }
 
 /******************************
+GLOBAL
+*******************************/
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+	outline: none;
+}
+/******************************
 SETTINGS
 *******************************/
 #settingsSection {
@@ -33,8 +42,8 @@ SETTINGS
 }
 
 .settingsH1 {
-	font-size: 30px;
-	color: #FFFFFF;
+	font-size: 20pt;
+	color: #ff9132;
 	margin: 0;
 	padding: 0;
 }
@@ -43,13 +52,29 @@ SETTINGS
 	width: 100%;
 	background: transparent;
 	border: none;
-	font-size: 65px;
-	color: #20ff9f;
+	font-size: 40pt;
+	color: #1aa7ff;
 	text-align: center;
 }
 
-.startListeningButton {
+.settingButtonContainer {
+	text-align: left;
+}
 
+.startListeningButton {
+	margin: 0;
+	padding: 10px;
+	color: #FFFFFF;
+	font-weight: bold;
+	background-color: #1aa7ff;
+	border-style: none;
+	border-radius: 7px;
+	font-size: 15pt;
+
+}
+
+.startListeningButton:hover {
+	background-color: #12bdff;
 }
 
 /******************************
@@ -108,7 +133,7 @@ MISC
 	border-radius: 10px;
 	position: relative;
 	top: 50%;
-	-webkit-transform: translateY(-80%)
+	-webkit-transform: translateY(-60%)
 }
 
 .simpleButton {
@@ -125,7 +150,7 @@ MISC
 
 .simpleButton:hover {
 	background-color: #2B2B2B;
-	border-color: #20ff9f   ;
+	border-color: #20ff9f;
 	color: #20ff9f;
 }
 
