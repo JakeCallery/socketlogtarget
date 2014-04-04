@@ -33,6 +33,7 @@ SETTINGS
 	padding-top: 10px;
 	padding-left: 10px;
 	padding-bottom: 5px;
+	padding-right: 10px;
 }
 
 .settingLI {
@@ -50,11 +51,12 @@ SETTINGS
 
 .settingsNumberInput {
 	width: 100%;
-	background: transparent;
+	background: #c5cdff;
 	border: none;
 	font-size: 40pt;
 	color: #1aa7ff;
 	text-align: center;
+	border-radius: 5px;
 }
 
 .settingButtonContainer {
@@ -75,6 +77,7 @@ SETTINGS
 
 .startListeningButton:hover {
 	background-color: #12bdff;
+	cursor: pointer;
 }
 
 /******************************
