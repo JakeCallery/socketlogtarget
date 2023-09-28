@@ -5,13 +5,98 @@ html {
 }
 
 body {
-	background-color: #FFFFFF;
+	background-color: #091a21;
 	height: 100%;
 	margin: 0;
 	padding: 0;
 	font-family: 'Open Sans', sans-serif;
 }
 
+/******************************
+GLOBAL
+*******************************/
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+	outline: none;
+}
+
+/******************************
+SETTINGS
+*******************************/
+#settingsSection {
+	padding: 0;
+}
+
+.settingsList {
+	list-style-type: none;
+	padding-top: 10px;
+	padding-left: 10px;
+	padding-bottom: 0px;
+	padding-right: 10px;
+}
+
+.settingLI {
+	margin: 0;
+	padding-bottom: 10px;
+	text-align: center;
+}
+
+.settingsH1 {
+	font-size: 20pt;
+	color: #D9AD70;
+	margin: 0;
+	padding: 0;
+}
+
+.settingsH2 {
+	font-size: 15pt;
+	color: #D9AD70;
+	margin: 0;
+	padding: 0;
+}
+
+.settingsNumberInput {
+	width: 100%;
+	background: transparent;
+	border: none;
+	font-size: 40pt;
+	color: #D75322;
+	text-align: center;
+	border-radius: 5px;
+	margin: 0;
+	padding: 0;
+}
+
+.settingButtonContainer {
+	text-align: left;
+	vertical-align: bottom;
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+
+.startListeningButton {
+	margin: 0;
+	padding: 10px;
+	color: #A59764;
+	font-weight: bold;
+	background-color: #2D5457;
+	border-style: none;
+	border-radius: 7px;
+	font-size: 15pt;
+
+}
+
+.startListeningButton:hover {
+	color: #ffffff;
+	cursor: pointer;
+	background-color: #366164;
+}
+
+/******************************
+CLIENT VIEW
+*******************************/
 .logTextArea {
 	width: 100%
 }
@@ -26,6 +111,9 @@ body {
 	margin: 0;
 }
 
+/******************************
+CLIENT LIST
+*******************************/
 #clientListContainer {
 	position: absolute;
 	right: 0;
@@ -44,10 +132,50 @@ body {
 	overflow-y: auto;
 }
 
+/******************************
+MISC
+*******************************/
 #bitsDiv {
 	visibility: hidden;
 }
 
 .hiddenElement {
 	visibility: hidden;
+}
+
+.basicModal {
+	margin-left: 10%;
+	margin-right: 10%;
+	background-color: #143641;
+	border-radius: 10px;
+	border-style: groove;
+	position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-60%)
+}
+
+.simpleButton {
+	margin: 0;
+	padding: 10px;
+	color: #20FF9F;
+	font-weight: bold;
+	background-color: #0e0e0e;
+	border-style: solid;
+	border-color: #20FF9F;
+	border-radius: 7px;
+	font-size: 20pt;
+}
+
+.simpleButton:hover {
+	background-color: #2B2B2B;
+	border-color: #20ff9f;
+	color: #20ff9f;
+}
+
+.buttonCenterWrapper {
+	text-align: center;
+}
+
+.centerAlign {
+	text-align: center;
 }
